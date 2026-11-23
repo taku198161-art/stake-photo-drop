@@ -510,6 +510,7 @@
     transition: all 0.3s;
   }
   .toast.show { transform: translateY(0); opacity: 1; }
+  .toast { z-index: 500; }
 
   /* ===== 撮影情報 ===== */
   .photo-meta-badge {
@@ -543,7 +544,7 @@
     background: #1f4a33; color: #fff; border: 2px solid #c9b88a;
     font-size: 9px; line-height: 1.45; padding: 3px 6px; text-align: left;
   }
-  .blackboard b { display: inline-block; width: 3.6em; font-weight: 600; color: #e8e2c8; }
+  .blackboard b { display: inline-block; min-width: 3.6em; margin-right: .3em; font-weight: 600; color: #e8e2c8; }
   .blackboard.small { font-size: 7px; padding: 2px 4px; border-width: 1px; }
   .dirmap-wrap { display: flex; justify-content: center; margin-top: 6px; }
   .dirmap-table { width: 100%; border-collapse: collapse; font-size: 9.5px; margin-top: 8px; }
@@ -639,6 +640,62 @@
     .card { padding: 18px 16px; }
   }
 
+  /* ===== 土地／建物パターン・撮影・撮影方向図（令和8年11月23日） ===== */
+  .seg { display: inline-flex; background: var(--idle-soft); border-radius: 12px; padding: 4px; gap: 4px; }
+  .seg button { border: 0; background: none; border-radius: 9px; padding: 8px 18px; font: inherit; font-weight: 700; color: var(--text-mid); cursor: pointer; }
+  .seg button.on { background: #fff; color: var(--accent-ink); box-shadow: var(--shadow-sm); }
+  .pattern-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 16px; }
+  .pattern-row .hint { font-size: 12px; color: var(--text-light); }
+  .shot-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 14px; align-items: center; }
+  .shot-actions .btn-big { padding: 12px 20px; font-size: 15px; font-weight: 700; }
+  .last-shot { margin-top: 12px; font-size: 13px; color: var(--text-mid); display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .last-shot img { width: 56px; height: 42px; object-fit: cover; border-radius: 6px; }
+  .livemap { border: 1px solid var(--border); border-radius: 12px; overflow: hidden; background: #fff; }
+  .livemap svg { display: block; width: 100%; height: auto; max-height: 440px; margin: 0 auto; }
+  .livemap-legend { font-size: 12px; color: var(--text-light); margin-top: 8px; }
+  .file-btn { position: relative; overflow: hidden; }
+  .file-btn input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+  .photo-entry.flash { box-shadow: 0 0 0 3px var(--accent); }
+  .photo-entry-img[onclick] { cursor: pointer; }
+  .item-shot-btns { display: flex; gap: 6px; flex-wrap: wrap; }
+
+  /* アプリ内カメラ */
+  .cam { position: fixed; inset: 0; z-index: 400; background: #000; display: none; color: #fff; }
+  .cam.on { display: block; }
+  .cam video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .cam-top { position: absolute; left: 0; right: 0; top: 0; padding: calc(env(safe-area-inset-top) + 8px) 12px 10px;
+    background: linear-gradient(rgba(0,0,0,.65), rgba(0,0,0,0)); display: flex; gap: 8px; align-items: center; }
+  .cam-top input { flex: 1; min-width: 0; background: rgba(0,0,0,.35); border: 1px solid rgba(255,255,255,.35); color: #fff;
+    border-radius: 10px; padding: 7px 10px; font: inherit; font-size: 14px; }
+  .cam-top input::placeholder { color: rgba(255,255,255,.6); }
+  .cam-btn { background: rgba(0,0,0,.45); color: #fff; border: 1px solid rgba(255,255,255,.4); border-radius: 10px;
+    padding: 7px 12px; font: inherit; font-size: 14px; font-weight: 700; cursor: pointer; white-space: nowrap; }
+  .cam-dir { position: absolute; left: 0; right: 0; top: calc(env(safe-area-inset-top) + 62px); text-align: center; pointer-events: none;
+    text-shadow: 0 1px 3px #000, 0 0 8px rgba(0,0,0,.8); }
+  .cam-dir .big { font-size: 40px; font-weight: 800; letter-spacing: .04em; line-height: 1.15; }
+  .cam-dir .small { font-size: 13px; opacity: .95; }
+  .cam-bottom { position: absolute; left: 0; right: 0; bottom: 0; padding: 10px 12px calc(env(safe-area-inset-bottom) + 14px);
+    background: linear-gradient(rgba(0,0,0,0), rgba(0,0,0,.75) 30%); }
+  .cam-chips { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 8px; -webkit-overflow-scrolling: touch; }
+  .cam-chip { flex: none; background: rgba(0,0,0,.45); color: #fff; border: 1px solid rgba(255,255,255,.45); border-radius: 999px;
+    padding: 6px 13px; font: inherit; font-size: 14px; font-weight: 700; cursor: pointer; white-space: nowrap; }
+  .cam-chip.on { background: #fff; color: var(--accent-ink); border-color: #fff; }
+  .cam-fields { display: flex; gap: 6px; padding-bottom: 10px; }
+  .cam-fields select, .cam-fields input { flex: 1; min-width: 0; background: rgba(0,0,0,.45); color: #fff; border: 1px solid rgba(255,255,255,.45);
+    border-radius: 10px; padding: 7px 8px; font: inherit; font-size: 14px; }
+  .cam-fields option { color: #000; }
+  .cam-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+  .cam-shutter { width: 74px; height: 74px; border-radius: 50%; border: 5px solid #fff; background: rgba(255,255,255,.25); cursor: pointer; flex: none; }
+  .cam-shutter:active { background: #fff; }
+  .cam-thumb { width: 64px; height: 48px; border-radius: 8px; border: 2px solid #fff; object-fit: cover; background: rgba(255,255,255,.1); cursor: pointer; }
+  .cam-side { width: 96px; display: flex; flex-direction: column; gap: 6px; align-items: flex-start; font-size: 12px; }
+  .cam-side.r { align-items: flex-end; }
+  .cam-flash { position: absolute; inset: 0; background: #fff; opacity: 0; pointer-events: none; transition: opacity .25s; }
+  .cam-flash.go { opacity: .7; transition: none; }
+  .cam-msg { position: absolute; left: 50%; top: 45%; transform: translate(-50%,-50%); background: rgba(0,0,0,.7); border-radius: 12px;
+    padding: 10px 16px; font-size: 15px; font-weight: 700; display: none; text-align: center; max-width: 85%; }
+  .cam-msg.show { display: block; }
+
   /* ===== PRINT ===== */
   @media print {
     body { background: white; }
@@ -672,23 +729,26 @@
 <div class="app">
 <!-- サイドバー（GeoDrop風） -->
 <aside class="side">
-  <div class="brand"><svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><rect x="8" y="8" width="240" height="240" rx="52" fill="#4f46e5"/><g fill="none" stroke="#ffffff" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"><path d="M44 88 V56 H76"/><path d="M180 56 H212 V88"/><path d="M212 168 V200 H180"/><path d="M76 200 H44 V168"/><path d="M96 96 H160 V172 L128 206 L96 172 Z"/></g><path d="M128 112 V156 M106 134 H150" stroke="#fbbf24" stroke-width="14" stroke-linecap="round"/></svg><div><h1>StakePhotoDrop</h1><p>境界杭写真台帳</p></div></div>
-  <button class="drop" onclick="addStakeFromSide()"><b>＋ 境界点を追加</b>写真は各点の枠にドロップ</button>
+  <div class="brand"><svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><rect x="8" y="8" width="240" height="240" rx="52" fill="#4f46e5"/><g fill="none" stroke="#ffffff" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"><path d="M44 88 V56 H76"/><path d="M180 56 H212 V88"/><path d="M212 168 V200 H180"/><path d="M76 200 H44 V168"/><path d="M96 96 H160 V172 L128 206 L96 172 Z"/></g><path d="M128 112 V156 M106 134 H150" stroke="#fbbf24" stroke-width="14" stroke-linecap="round"/></svg><div><h1>StakePhotoDrop</h1><p id="brandSub">境界杭写真台帳</p></div></div>
+  <button class="drop" onclick="addStakeFromSide()"><b id="sideAddLabel">＋ 境界点を追加</b>写真は各枠にドロップ、または📷撮影</button>
   <div class="section-label">画面</div>
   <nav class="nav">
     <button class="tab active" data-tab="edit" onclick="switchTab('edit')"><div class="n">編集</div><div class="m">現場情報・境界点・写真</div></button>
     <button class="tab" data-tab="preview" onclick="switchTab('preview')"><div class="n">プレビュー・印刷</div><div class="m">PDF・撮影位置CSV</div></button>
   </nav>
-  <div class="section-label">境界点</div>
+  <div class="section-label" id="sideItemLabel">境界点</div>
   <div class="jobs" id="sideStakes"></div>
   <div class="side-foot">
-    <div class="ver">StakePhotoDrop v1.1</div>
+    <div class="ver">StakePhotoDrop v1.2</div>
     <div class="row2">
       <button class="btn btn-primary" onclick="saveToFolder()" title="NASの案件フォルダ等に一括保存">📁 フォルダに保存</button>
     </div>
     <div class="row2">
       <button class="btn" onclick="exportJSON()" title="データ保存">💾 保存</button>
       <button class="btn" onclick="document.getElementById('importInput').click()" title="データ読込">📂 読込</button>
+    </div>
+    <div class="row2">
+      <button class="btn" onclick="newWork()" title="入力内容を消して新しい現場を始める（この端末の一時保存も消去）">🆕 新規</button>
     </div>
     <input type="file" id="importInput" accept=".json" style="display:none" onchange="importJSON(event)">
   </div>
@@ -704,6 +764,14 @@
     <!-- 現場情報 -->
     <div class="card">
       <div class="card-title">📋 現場情報</div>
+      <div class="pattern-row">
+        <span class="form-label" style="margin:0">撮影パターン</span>
+        <div class="seg" id="patternSeg">
+          <button data-p="land" class="on" onclick="setPattern('land')">🟦 土地</button>
+          <button data-p="building" onclick="setPattern('building')">🏠 建物</button>
+        </div>
+        <span class="hint" id="patternHint">境界杭の写真（境界点・杭種・設置状況・座標）</span>
+      </div>
       <div class="form-grid">
         <div class="form-group">
           <label class="form-label">所在地</label>
@@ -712,6 +780,10 @@
         <div class="form-group">
           <label class="form-label">地番</label>
           <input class="form-input" id="field-chiban" placeholder="例：123番1">
+        </div>
+        <div class="form-group" id="grp-kaoku" style="display:none">
+          <label class="form-label">家屋番号</label>
+          <input class="form-input" id="field-kaoku" placeholder="例：123番1">
         </div>
         <div class="form-group">
           <label class="form-label">調査日</label>
@@ -731,15 +803,15 @@
         </div>
         <div class="form-group">
           <label class="form-label">平面直角座標系（JGD2011）</label>
-          <select class="form-select" id="field-zone" onchange="renderStakes()"></select>
+          <select class="form-select" id="field-zone" onchange="renderStakes();renderGeo()"></select>
         </div>
 
       </div>
     </div>
 
-    <!-- コンパス -->
+    <!-- 撮影（方位・現在地） -->
     <div class="card">
-      <div class="card-title">🧭 方位（この端末の向き）</div>
+      <div class="card-title">📷 撮影（方位・現在地）</div>
       <div class="compass-card">
         <div class="compass-dial">
           <svg viewBox="-50 -50 100 100">
@@ -756,10 +828,29 @@
         </div>
         <div style="flex:1;min-width:200px">
           <div class="compass-deg" id="compassDeg">―</div>
-          <div class="compass-status" id="compassStatus">iPhoneでは「方位を表示」を押すと使用許可を求められます</div>
+          <div class="compass-status" id="compassStatus">iPhoneでは「方位・現在地を表示」を押すと使用許可を求められます</div>
+          <div class="compass-status" id="geoStatus"></div>
         </div>
-        <button class="btn btn-primary" onclick="startCompass()">🧭 方位を表示</button>
+        <button class="btn" onclick="startSensors()">🧭 方位・現在地を表示</button>
       </div>
+      <div class="shot-actions">
+        <div class="form-group" style="min-width:200px;flex:1">
+          <label class="form-label" id="shotTargetLabel">撮影する境界点</label>
+          <select class="form-select" id="shotTarget" onchange="shotTargetId=this.value==='new'?null:parseInt(this.value)"></select>
+        </div>
+      </div>
+      <div class="shot-actions">
+        <button class="btn btn-primary btn-big" onclick="openCamera()">📷 カメラで撮影</button>
+        <label class="btn file-btn">🖼 写真を選んで追加<input type="file" accept="image/*" multiple onchange="addFilesToTarget(this.files);this.value=''"></label>
+      </div>
+      <div class="last-shot" id="lastShot"></div>
+    </div>
+
+    <!-- 撮影方向図（撮影と同時に更新） -->
+    <div class="card">
+      <div class="card-title">🗺 撮影方向図 <span class="badge">撮影と同時に更新</span></div>
+      <div class="livemap" id="liveMap"></div>
+      <div class="livemap-legend" id="liveMapLegend"></div>
     </div>
 
     <!-- 注意書き -->
@@ -783,11 +874,11 @@
     <!-- 境界点リスト -->
     <div class="card">
       <div class="card-title">
-        📍 境界点一覧
+        <span id="itemListTitle">📍 境界点一覧</span>
         <span class="badge" id="stake-count">0 点</span>
       </div>
       <div class="stake-list" id="stakeList"></div>
-      <button class="add-stake-btn" onclick="addStake()">
+      <button class="add-stake-btn" id="addItemBtn" onclick="addStake()">
         ＋ 境界点を追加
       </button>
     </div>
@@ -819,6 +910,36 @@
     <div class="preview-container" id="previewContainer"></div>
   </div>
 </main>
+</div>
+
+<!-- アプリ内カメラ -->
+<div class="cam" id="cam">
+  <video id="camVideo" playsinline muted autoplay></video>
+  <div class="cam-flash" id="camFlash"></div>
+  <div class="cam-top">
+    <input id="camSite" placeholder="現場名（所在地）" oninput="document.getElementById('field-location').value=this.value;scheduleAutosave()">
+    <button class="cam-btn" onclick="closeCamera()">✕ 閉じる</button>
+  </div>
+  <div class="cam-dir">
+    <div class="big" id="camDirBig">方位 ―</div>
+    <div class="small" id="camDirSmall">「方位」を押すと方角を表示します</div>
+  </div>
+  <div class="cam-msg" id="camMsg"></div>
+  <div class="cam-bottom">
+    <div class="cam-chips" id="camChips"></div>
+    <div class="cam-fields" id="camFields"></div>
+    <div class="cam-row">
+      <div class="cam-side">
+        <img class="cam-thumb" id="camThumb" alt="" onclick="openLastShot()">
+        <span id="camCount"></span>
+      </div>
+      <button class="cam-shutter" id="camShutter" onclick="takeShot()" aria-label="撮影"></button>
+      <div class="cam-side r">
+        <button class="cam-btn" onclick="startSensors()">🧭 方位</button>
+        <button class="cam-btn" onclick="closeCamera();switchTab('preview')">📄 写真帳</button>
+      </div>
+    </div>
+  </div>
 </div>
 
 <!-- TOAST -->
@@ -856,10 +977,18 @@
         <input class="form-input" type="number" step="0.00000001" id="meta-lon" onchange="updateMetaField('lon',this.value)">
       </div>
       <div class="form-group full">
+        <label class="form-label" id="metaMoveLabel">この写真の境界点（写真帳での並び先）</label>
+        <select class="form-select" id="meta-move" onchange="movePhotoTo(parseInt(this.value))"></select>
+      </div>
+      <div class="form-group full">
         <label class="form-label">写真の備考</label>
         <input class="form-input" id="meta-note" placeholder="例：南側から撮影、ブロック塀角" onchange="updateMetaField('note',this.value)">
       </div>
       <div class="meta-readonly full" id="meta-info"></div>
+    </div>
+    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:14px;flex-wrap:wrap">
+      <button class="btn btn-sm" onclick="showModalPhotoInLedger()">📄 写真帳で見る</button>
+      <button class="btn btn-sm btn-danger" onclick="removeModalPhoto()">この写真を削除</button>
     </div>
 
   </div>
@@ -883,7 +1012,7 @@ function toWareki(iso) {
   } catch (e) { return iso; }
 }
 // ファイル名：物件名_書類種別_日付（和暦）
-function buildFileName(ext, kind = '境界杭写真台帳') {
+function buildFileName(ext, kind = P().title) {
   const loc = (document.getElementById('field-location').value || '現場').replace(/[\\/:*?"<>|]/g, '_');
   const date = toWareki(document.getElementById('field-date').value || localISODate()) || localISODate();
   return `${loc}_${kind}_${date}.${ext}`;
@@ -1062,12 +1191,46 @@ function onOrientation(e) {
   if (typeof e.webkitCompassHeading === 'number' && e.webkitCompassHeading >= 0) {
     h = e.webkitCompassHeading; ref = 'M';             // iPhone（Safari）
   } else if (e.absolute && typeof e.alpha === 'number') {
-    h = (360 - e.alpha) % 360; ref = 'M';              // Android（端末を水平に持った時の値）
+    h = rearCameraHeading(e.alpha, e.beta || 0, e.gamma || 0); ref = 'M';   // Android（背面カメラの向き）
   }
   if (h === null) return;
   compass.heading = h; compass.ref = ref; compass.at = Date.now();
   renderCompass();
 }
+// 端末の背面カメラが向いている方位（W3C DeviceOrientation仕様の計算例）
+function rearCameraHeading(alpha, beta, gamma) {
+  const r = Math.PI / 180, x = beta * r, y = gamma * r, z = alpha * r;
+  const cX = Math.cos(x), cY = Math.cos(y), cZ = Math.cos(z), sX = Math.sin(x), sY = Math.sin(y), sZ = Math.sin(z);
+  const Vx = -cZ * sY - sZ * sX * cY, Vy = -sZ * sY + cZ * sX * cY;
+  let h = Math.atan(Vx / Vy);
+  if (Vy < 0) h += Math.PI; else if (Vx < 0) h += 2 * Math.PI;
+  return h * 180 / Math.PI;
+}
+// ===== 現在地（端末のGPS・外部送信なし） =====
+const geo = { lat: null, lon: null, acc: null, at: 0, watching: false };
+function startGeo() {
+  const st = document.getElementById('geoStatus');
+  if (!navigator.geolocation) { st.textContent = 'この端末・ブラウザは現在地に対応していません'; return; }
+  if (geo.watching) return;
+  geo.watching = true;
+  st.textContent = '現在地を取得中…';
+  navigator.geolocation.watchPosition(pos => {
+    geo.lat = pos.coords.latitude; geo.lon = pos.coords.longitude; geo.acc = pos.coords.accuracy; geo.at = Date.now();
+    renderGeo(); scheduleLiveMap();
+  }, err => {
+    geo.watching = false;
+    st.textContent = err.code === 1 ? '現在地の使用が許可されていません（設定 → Safari → 位置情報）' : '現在地を取得できませんでした（HTTPSで開く必要があります）';
+  }, { enableHighAccuracy: true, maximumAge: 3000, timeout: 30000 });
+}
+function renderGeo() {
+  if (geo.lat === null) return;
+  const xy = llToXY(geo.lat, geo.lon, currentZone());
+  const txt = `現在地：X=${xy.x.toFixed(3)}　Y=${xy.y.toFixed(3)}（第${ROMAN[currentZone()]}系）誤差 約${Math.round(geo.acc)}m`;
+  document.getElementById('geoStatus').textContent = txt;
+  updateCamDir();
+}
+// 方位と現在地をまとめて開始（iPhoneはボタン操作時のみ許可を求められる）
+function startSensors() { startCompass(); startGeo(); }
 async function startCompass() {
   const st = document.getElementById('compassStatus');
   if (!compassSupported()) { st.textContent = 'この端末・ブラウザはコンパスに対応していません（PCでは表示されません）'; return; }
@@ -1095,7 +1258,8 @@ function renderCompass() {
   const h = compass.heading;
   document.getElementById('compassRose').style.transform = `rotate(${-h}deg)`;
   document.getElementById('compassDeg').textContent = `${dirName(h)} ${h.toFixed(0)}°`;
-  document.getElementById('compassStatus').textContent = '端末上端の向き（磁北基準・目安）。撮影した写真に方位が無い場合、この値を記録します';
+  document.getElementById('compassStatus').textContent = 'カメラの向き（磁北基準・目安）。アプリで撮影した写真にはこの値を記録します';
+  updateCamDir();
 }
 // 撮影直後（60秒以内）の写真で方位が取れなかった場合、コンパス値で補う
 function compassFallback(file) {
@@ -1103,18 +1267,31 @@ function compassFallback(file) {
   if (Date.now() - (file.lastModified || 0) > 60000) return null;
   return { dir: compass.heading, dirRef: compass.ref || 'M', dirSource: 'compass' };
 }
+// 撮影直後の写真で位置が取れなかった場合（iPhoneのブラウザ撮影は位置が消える）、アプリの現在地で補う
+function geoFallback(file) {
+  if (geo.lat === null || Date.now() - geo.at > 30000) return null;
+  if (file && Date.now() - (file.lastModified || 0) > 60000) return null;
+  return { lat: geo.lat, lon: geo.lon, hErr: geo.acc, posSource: 'app' };
+}
+function nowExifDate() {
+  const d = new Date(), p = n => String(n).padStart(2, '0');
+  return `${d.getFullYear()}:${p(d.getMonth() + 1)}:${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}:${p(d.getSeconds())}`;
+}
 
 // ===== 撮影方向図（SVG・背景地図なし） =====
 function niceStep(v) {
   const p = Math.pow(10, Math.floor(Math.log10(v))), r = v / p;
   return (r < 1.5 ? 1 : r < 3.5 ? 2 : r < 7.5 ? 5 : 10) * p;
 }
-function buildDirectionMap(photoList, Wmm, Hmm) {
+// opt.screen：編集画面用（クリックで写真を開く）／opt.here：現在地／opt.lastNo：最新の写真番号
+function buildDirectionMap(photoList, Wmm, Hmm, opt = {}) {
   const zone = currentZone();
   const pts = [];
   photoList.forEach(e => { const xy = photoXY(e.photo); if (xy) pts.push(xy); });
   const stakePts = [];
-  stakes.forEach(s => { const x = parseFloat(s.x), y = parseFloat(s.y); if (isFinite(x) && isFinite(y)) { stakePts.push({ s, x, y }); pts.push({ x, y }); } });
+  if (pattern === 'land') stakes.forEach(s => { const x = parseFloat(s.x), y = parseFloat(s.y); if (isFinite(x) && isFinite(y)) { stakePts.push({ s, x, y }); pts.push({ x, y }); } });
+  const here = opt.here ? llToXY(opt.here.lat, opt.here.lon, zone) : null;
+  if (here) pts.push(here);
   if (pts.length === 0) return null;
   let minX = Math.min(...pts.map(p => p.x)), maxX = Math.max(...pts.map(p => p.x));
   let minY = Math.min(...pts.map(p => p.y)), maxY = Math.max(...pts.map(p => p.y));
@@ -1126,7 +1303,9 @@ function buildDirectionMap(photoList, Wmm, Hmm) {
   const s = 1000 / den; // mm / m
   const cx = (minY + maxY) / 2, cy = (minX + maxX) / 2;
   const px = Y => Wmm / 2 + (Y - cx) * s, py = X => Hmm / 2 - (X - cy) * s;
-  let svg = `<svg class="dirmap-svg" viewBox="0 0 ${Wmm} ${Hmm}" width="${Wmm}mm" height="${Hmm}mm" xmlns="http://www.w3.org/2000/svg" font-family="Noto Sans JP, sans-serif">`;
+  let svg = opt.screen
+    ? `<svg class="dirmap-svg" viewBox="0 0 ${Wmm} ${Hmm}" xmlns="http://www.w3.org/2000/svg" font-family="sans-serif">`
+    : `<svg class="dirmap-svg" viewBox="0 0 ${Wmm} ${Hmm}" width="${Wmm}mm" height="${Hmm}mm" xmlns="http://www.w3.org/2000/svg" font-family="Noto Sans JP, sans-serif">`;
   svg += `<rect x="0" y="0" width="${Wmm}" height="${Hmm}" fill="#fff" stroke="#333" stroke-width="0.3"/>`;
   // 座標グリッド
   const step = niceStep((Wmm / 4) / s);
@@ -1141,7 +1320,7 @@ function buildDirectionMap(photoList, Wmm, Hmm) {
   }
   // 写真→境界点の対応線
   photoList.forEach(e => {
-    const xy = photoXY(e.photo); if (!xy) return;
+    const xy = photoXY(e.photo); if (!xy || pattern !== 'land') return;
     const sx = parseFloat(e.stake.x), sy = parseFloat(e.stake.y);
     if (isFinite(sx) && isFinite(sy)) svg += `<line x1="${px(xy.y).toFixed(2)}" y1="${py(xy.x).toFixed(2)}" x2="${px(sy).toFixed(2)}" y2="${py(sx).toFixed(2)}" stroke="#888" stroke-width="0.25" stroke-dasharray="1,1"/>`;
   });
@@ -1149,12 +1328,14 @@ function buildDirectionMap(photoList, Wmm, Hmm) {
   stakePts.forEach(({ s: st, x, y }) => {
     const X = px(y), Y = py(x);
     svg += `<circle cx="${X.toFixed(2)}" cy="${Y.toFixed(2)}" r="1.6" fill="#fff" stroke="#000" stroke-width="0.4"/><circle cx="${X.toFixed(2)}" cy="${Y.toFixed(2)}" r="0.5" fill="#000"/>`;
-    svg += `<text x="${(X + 2.2).toFixed(2)}" y="${(Y - 1.6).toFixed(2)}" font-size="3" font-weight="700" fill="#000">${st.pointNumber}</text>`;
+    svg += `<text x="${(X + 2.2).toFixed(2)}" y="${(Y - 1.6).toFixed(2)}" font-size="3" font-weight="700" fill="#000">${escSide(st.pointNumber)}</text>`;
   });
   // 撮影位置と撮影方向
   photoList.forEach(e => {
     const xy = photoXY(e.photo); if (!xy) return;
     const m = e.photo.meta, X = px(xy.y), Y = py(xy.x);
+    if (opt.screen) svg += `<g style="cursor:pointer" onclick="openImageModal(${e.stake.id},${e.stake.photos.indexOf(e.photo)})"><title>写真${e.no}（${escSide(itemName(e.stake))}）</title>`;
+    if (opt.lastNo === e.no) svg += `<circle cx="${X.toFixed(2)}" cy="${Y.toFixed(2)}" r="3.2" fill="none" stroke="#4f46e5" stroke-width="0.6"/>`;
     if (isFinite(m.dir)) {
       const g = trueToGridBearing(m.lat, m.lon, m.dir, zone) * Math.PI / 180, R = 11, w = 25 * Math.PI / 180;
       const fx = a => (X + Math.sin(a) * R).toFixed(2), fy = a => (Y - Math.cos(a) * R).toFixed(2);
@@ -1169,7 +1350,17 @@ function buildDirectionMap(photoList, Wmm, Hmm) {
       svg += `<circle cx="${(X + 3.5).toFixed(2)}" cy="${(Y - 3.5).toFixed(2)}" r="2.1" fill="#fff" stroke="#c00" stroke-width="0.35"/><text x="${(X + 3.5).toFixed(2)}" y="${(Y - 2.5).toFixed(2)}" font-size="2.6" font-weight="700" text-anchor="middle" fill="#c00">${e.no}</text>`;
     }
     svg += `<circle cx="${X.toFixed(2)}" cy="${Y.toFixed(2)}" r="0.9" fill="#c00"/>`;
+    if (opt.screen) svg += `</g>`;
   });
+  // 現在地（編集画面のみ）
+  if (here) {
+    const X = px(here.y), Y = py(here.x);
+    if (opt.here.dir !== null && isFinite(opt.here.dir)) {
+      const g = trueToGridBearing(opt.here.lat, opt.here.lon, opt.here.dir, zone) * Math.PI / 180;
+      svg += `<line x1="${X.toFixed(2)}" y1="${Y.toFixed(2)}" x2="${(X + Math.sin(g) * 8).toFixed(2)}" y2="${(Y - Math.cos(g) * 8).toFixed(2)}" stroke="#2563eb" stroke-width="0.6" stroke-dasharray="1.2,0.8"/>`;
+    }
+    svg += `<circle cx="${X.toFixed(2)}" cy="${Y.toFixed(2)}" r="1.8" fill="#2563eb" stroke="#fff" stroke-width="0.6"/><text x="${(X + 2.6).toFixed(2)}" y="${(Y + 3.6).toFixed(2)}" font-size="2.6" fill="#2563eb" font-weight="700">現在地</text>`;
+  }
   // 方位記号（座標北）
   const nx = Wmm - 12, ny = 14;
   svg += `<g transform="translate(${nx},${ny})"><circle r="7" fill="#fff" stroke="#000" stroke-width="0.3"/><path d="M0,-6 L2.2,3 L0,1.5 L-2.2,3 Z" fill="#000"/><text y="-7.8" font-size="3.2" font-weight="700" text-anchor="middle">N</text><text y="11" font-size="2" text-anchor="middle" fill="#555">座標北</text></g>`;
@@ -1193,19 +1384,20 @@ function exportPhotoCSV() {
 }
 function buildPhotoCSV() {
   const zone = currentZone();
-  const rows = [['写真番号', '境界点', '撮影日時', '緯度', '経度', '座標系', 'X座標(m)', 'Y座標(m)', '撮影方位(度)', '方位基準', '座標北基準の方向角(度)', '方位の取得元', '標高(m)', '位置の誤差目安(m)', '機種']];
+  const rows = [['写真番号', P().item, pattern === 'building' ? '区分・階' : '杭種・状況', '撮影日時', '緯度', '経度', '座標系', 'X座標(m)', 'Y座標(m)', '撮影方位(度)', '方位基準', '座標北基準の方向角(度)', '方位の取得元', '位置の取得元', '標高(m)', '位置の誤差目安(m)', '機種', '写真の備考']];
   let no = 0;
   stakes.forEach(s => s.photos.forEach(p => {
     no++;
     const m = p.meta || {}, xy = photoXY(p);
     const hasLL = isFinite(m.lat) && isFinite(m.lon), hasDir = isFinite(m.dir);
-    rows.push([no, s.pointNumber, exifDateToWareki(m.dateTime),
+    rows.push([no, itemName(s), itemSub(s), exifDateToWareki(m.dateTime),
       hasLL ? m.lat.toFixed(8) : '', hasLL ? m.lon.toFixed(8) : '', `第${ROMAN[zone]}系`,
       xy ? xy.x.toFixed(3) : '', xy ? xy.y.toFixed(3) : '',
       hasDir ? m.dir.toFixed(1) : '', hasDir ? (m.dirRef === 'M' ? '磁北' : '真北') : '',
       hasDir && hasLL && m.dirRef !== 'M' ? trueToGridBearing(m.lat, m.lon, m.dir, zone).toFixed(1) : '',
       { exif: '写真のEXIF', manual: '手入力', compass: 'アプリのコンパス' }[m.dirSource] || '',
-      isFinite(m.alt) ? m.alt.toFixed(1) : '', isFinite(m.hErr) ? m.hErr.toFixed(1) : '', m.model || '']);
+      hasLL ? (m.posSource === 'app' ? 'アプリの現在地' : m.posSource === 'manual' ? '手入力' : '写真のEXIF') : '',
+      isFinite(m.alt) ? m.alt.toFixed(1) : '', isFinite(m.hErr) ? m.hErr.toFixed(1) : '', m.model || '', p.note || '']);
   }));
   return no === 0 ? null : '\uFEFF' + rows.map(r => r.map(v => { const t = String(v ?? ''); return /[",\n]/.test(t) ? `"${t.replace(/"/g, '""')}"` : t; }).join(',')).join('\r\n');
 }
@@ -1215,11 +1407,13 @@ function blackboardHTML(s, p, small) {
   const m = p.meta || {};
   const date = m.dateTime ? exifDateToWareki(m.dateTime).split(' ')[0] : (toWareki(document.getElementById('field-date').value) || '');
   const proj = document.getElementById('field-project').value || '';
+  const rowsP = pattern === 'building'
+    ? `<div><b>撮影箇所</b>${escSide(itemName(s))}</div><div><b>区　分</b>${escSide(itemSub(s))}</div>`
+    : `<div><b>境界点</b>${escSide(s.pointNumber)}</div><div><b>杭　種</b>${escSide(s.stakeType)}（${escSide(s.condition)}）</div>`;
   return `<div class="blackboard${small ? ' small' : ''}">
-    ${proj ? `<div><b>業務名</b>${proj}</div>` : ''}
-    <div><b>境界点</b>${s.pointNumber}</div>
-    <div><b>杭　種</b>${s.stakeType}（${s.condition}）</div>
-    ${p.note ? `<div><b>備　考</b>${p.note}</div>` : ''}
+    ${proj ? `<div><b>業務名</b>${escSide(proj)}</div>` : ''}
+    ${rowsP}
+    ${p.note ? `<div><b>備　考</b>${escSide(p.note)}</div>` : ''}
     <div><b>撮影日</b>${date}</div>
   </div>`;
 }
@@ -1235,7 +1429,7 @@ async function saveToFolder() {
   try { root = await window.showDirectoryPicker({ id: 'stakephotodrop', mode: 'readwrite' }); }
   catch (e) { return; } // キャンセル
   try {
-    const name = buildFileName('', '境界杭写真台帳').replace(/\.$/, '');
+    const name = buildFileName('', P().title).replace(/\.$/, '');
     const dir = await root.getDirectoryHandle(name, { create: true });
     const write = async (d, fname, blob) => {
       const fh = await d.getFileHandle(fname, { create: true });
@@ -1248,7 +1442,7 @@ async function saveToFolder() {
     for (const s of stakes) for (const p of s.photos) {
       no++;
       const blob = await (await fetch(p.dataUrl)).blob();
-      const safe = String(s.pointNumber).replace(/[\\/:*?"<>|]/g, '_');
+      const safe = String(itemName(s)).replace(/[\\/:*?"<>|]/g, '_');
       await write(pdir, `写真${String(no).padStart(2, '0')}_${safe}.jpg`, blob);
     }
     showToast(`「${name}」に保存しました（写真${no}枚）`);
@@ -1264,25 +1458,87 @@ let stakeIdCounter = 0;
 let currentModalStakeId = null;
 let currentModalPhotoIdx = null;
 let currentRotation = 0;
+let shotTargetId = null;   // 撮影した写真を入れる境界点・撮影箇所
+let lastShot = null;       // { stakeId, photo }
+
+// ===== 撮影パターン（土地／建物） =====
+let pattern = 'land';
+const PAT = {
+  land: {
+    name: '土地', item: '境界点', unit: '点', title: '境界杭写真台帳', titleSp: '境 界 杭 写 真 台 帳',
+    hint: '境界杭の写真（境界点・杭種・設置状況・座標）', proj: '例：境界確認測量',
+    edit: '現場情報を入れ、境界点ごとに写真を撮影・追加してください。データはこの端末の中だけで扱います。'
+  },
+  building: {
+    name: '建物', item: '撮影箇所', unit: '箇所', title: '建物写真台帳', titleSp: '建 物 写 真 台 帳',
+    hint: '建物の外観・内部の写真（撮影箇所・区分・階）', proj: '例：建物表題登記',
+    edit: '現場情報を入れ、撮影箇所（外観・各部屋など）ごとに写真を撮影・追加してください。データはこの端末の中だけで扱います。'
+  }
+};
+const STAKE_TYPES = ['コンクリート杭', '金属標', 'プラスチック杭', '木杭', '石杭', '鋲', '刻み', 'ペンキ', 'その他'];
+const CONDITIONS = ['新設', '復元', '既設'];
+const BLD_CATS = ['外観', '内部', '屋根', '基礎', '附属建物', '設備', 'その他'];
+const BLD_FLOORS = ['―', '1階', '2階', '3階', '4階', '地階', '屋上'];
+const BLD_PLACES = ['外観（北側）', '外観（東側）', '外観（南側）', '外観（西側）', '外観（北東から）', '外観（南東から）', '外観（南西から）', '外観（北西から）',
+  '玄関', '居間', '台所', '食堂', '和室', '洋室', '寝室', '浴室', '洗面所', '便所', '廊下', '階段', '納戸', '車庫', '倉庫', '事務所', '店舗',
+  '屋根', '基礎', '附属建物', '給湯器', '分電盤'];
+function P() { return PAT[pattern]; }
+function itemName(s) { return pattern === 'building' ? (s.place || s.pointNumber) : s.pointNumber; }
+function itemSub(s) {
+  if (pattern === 'building') return [s.bcat || '外観', s.floor && s.floor !== '―' ? s.floor : ''].filter(Boolean).join('・');
+  return `${s.stakeType}・${s.condition}`;
+}
+function setPattern(p, silent) {
+  if (!PAT[p]) p = 'land';
+  if (!silent && p !== pattern && stakes.length &&
+      !confirm(`撮影パターンを「${PAT[p].name}」に切り替えますか？\n入力済みの内容は消えません（画面と写真帳の様式が切り替わります）。`)) return;
+  pattern = p;
+  document.querySelectorAll('#patternSeg button').forEach(b => b.classList.toggle('on', b.dataset.p === p));
+  const L = P();
+  document.getElementById('patternHint').textContent = L.hint;
+  document.getElementById('brandSub').textContent = L.title;
+  document.title = `StakePhotoDrop｜${L.title}`;
+  document.getElementById('sideAddLabel').textContent = `＋ ${L.item}を追加`;
+  document.getElementById('sideItemLabel').textContent = L.item;
+  document.getElementById('itemListTitle').textContent = `${p === 'building' ? '🏠' : '📍'} ${L.item}一覧`;
+  document.getElementById('addItemBtn').textContent = `＋ ${L.item}を追加`;
+  document.getElementById('shotTargetLabel').textContent = `撮影する${L.item}`;
+  document.getElementById('metaMoveLabel').textContent = `この写真の${L.item}（写真帳での並び先）`;
+  document.getElementById('field-project').placeholder = L.proj;
+  document.getElementById('grp-kaoku').style.display = p === 'building' ? '' : 'none';
+  MAIN_HEADS.edit[1] = L.edit;
+  if (document.getElementById('tab-edit').classList.contains('active')) switchTab('edit');
+  updateStakeCount();
+  renderStakes();
+  if (document.getElementById('tab-preview').classList.contains('active')) renderPreview();
+  scheduleAutosave();
+}
 
 // ===== STAKE MANAGEMENT =====
 function addStake() {
   const id = ++stakeIdCounter;
+  const place = pattern === 'building' ? (BLD_PLACES.slice(0, 4).find(n => !stakes.some(s => s.place === n)) || '居間') : '';
+  const ext = !place || place.startsWith('外観');
   stakes.push({
     id,
     pointNumber: `T${id}`,
     stakeType: 'コンクリート杭',
     condition: '新設',
+    place, bcat: ext ? '外観' : '内部', floor: ext ? '―' : '1階',
     notes: '',
-    photos: [] // { dataUrl, rotation }
+    photos: [] // { dataUrl, rotation, meta, note, board }
   });
+  shotTargetId = id;
   renderStakes();
   updateStakeCount();
+  return stakes[stakes.length - 1];
 }
 
 function removeStake(id) {
-  if (!confirm('この境界点を削除しますか？')) return;
+  const s = stakes.find(t => t.id === id);
+  if (!confirm(`この${P().item}（${s ? itemName(s) : ''}）と写真${s ? s.photos.length : 0}枚を削除しますか？`)) return;
   stakes = stakes.filter(s => s.id !== id);
+  if (shotTargetId === id) shotTargetId = null;
   renderStakes();
   updateStakeCount();
 }
@@ -1290,6 +1546,13 @@ function removeStake(id) {
 function updateStakeField(id, field, value) {
   const stake = stakes.find(s => s.id === id);
   if (stake) stake[field] = value;
+  if (field === 'place') {      // 撮影箇所名から区分を推定
+    if (/^外観/.test(value)) stake.bcat = '外観';
+    else if (BLD_CATS.includes(value)) stake.bcat = value;
+  }
+  renderShotTarget();
+  scheduleLiveMap();
+  scheduleAutosave();
 }
 
 function copyPhotoXY(id) {
@@ -1303,8 +1566,16 @@ function copyPhotoXY(id) {
 }
 
 function updateStakeCount() {
-  document.getElementById('stake-count').textContent = `${stakes.length} 点`;
+  document.getElementById('stake-count').textContent = `${stakes.length} ${P().unit}`;
 }
+
+// 写真番号（写真帳・撮影方向図と同じ通し番号）
+function photoEntries() {
+  const list = []; let no = 0;
+  stakes.forEach((s, idx) => s.photos.forEach((p, pi) => list.push({ stake: s, idx, photo: p, pi, no: ++no })));
+  return list;
+}
+function photoNoOf(photo) { const e = photoEntries().find(e => e.photo === photo); return e ? e.no : null; }
 
 // ===== PHOTO MANAGEMENT =====
 function handlePhotoDrop(e, stakeId) {
@@ -1314,50 +1585,70 @@ function handlePhotoDrop(e, stakeId) {
   if (!files) return;
   processPhotoFiles(files, stakeId);
 }
+// 撮影カードの「写真を選んで追加」：選択中の境界点（なければ新規）へ
+function addFilesToTarget(files) {
+  let s = stakes.find(t => t.id === shotTargetId);
+  if (!s) s = addStake();
+  processPhotoFiles(files, s.id);
+}
+function resizeToDataUrl(src, MAX = 1200) {
+  return new Promise(resolve => {
+    const draw = (img, w0, h0) => {
+      let w = w0, h = h0;
+      if (w > MAX || h > MAX) {
+        if (w > h) { h = h * MAX / w; w = MAX; }
+        else { w = w * MAX / h; h = MAX; }
+      }
+      const canvas = document.createElement('canvas');
+      canvas.width = Math.round(w); canvas.height = Math.round(h);
+      canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+      resolve(canvas.toDataURL('image/jpeg', 0.85));
+    };
+    if (src instanceof HTMLVideoElement) { draw(src, src.videoWidth, src.videoHeight); return; }
+    const img = new Image();
+    img.onload = () => draw(img, img.width, img.height);
+    img.onerror = () => resolve(null);
+    img.src = src;
+  });
+}
+// 写真を境界点・撮影箇所に追加 → 写真帳・撮影方向図へ即反映
+function addPhotoToItem(stake, dataUrl, meta) {
+  const photo = { dataUrl, rotation: 0, meta, note: '', board: true };
+  stake.photos.push(photo);
+  shotTargetId = stake.id;
+  lastShot = { stakeId: stake.id, photo };
+  renderStakes();
+  if (document.getElementById('tab-preview').classList.contains('active')) renderPreview();
+  return photo;
+}
 
 async function processPhotoFiles(files, stakeId) {
   const stake = stakes.find(s => s.id === stakeId);
   if (!stake) return;
-  let noGps = 0, noDir = 0, failed = 0, added = 0;
+  let noGps = 0, noDir = 0, failed = 0, added = 0, lastPhoto = null;
   for (const file of Array.from(files)) {           // 選んだ順に1枚ずつ処理
     const isHeic = /\.hei[cf]$/i.test(file.name) || /hei[cf]/i.test(file.type);
     if (!file.type.startsWith('image/') && !isHeic) continue;
     let meta = {};
     try { meta = extractPhotoMeta(parseExif(await file.slice(0, 512 * 1024).arrayBuffer())); } catch (e) { meta = {}; }
     if (!isFinite(meta.dir)) Object.assign(meta, compassFallback(file) || {});
+    if (!isFinite(meta.lat)) Object.assign(meta, geoFallback(file) || {});
+    if (!meta.dateTime && Date.now() - (file.lastModified || 0) < 60000) meta.dateTime = nowExifDate();
     const url = URL.createObjectURL(file);
-    const dataUrl = await new Promise(resolve => {
-      const img = new Image();
-      img.onload = () => {
-        const canvas = document.createElement('canvas');
-        const MAX = 1200;
-        let w = img.width, h = img.height;
-        if (w > MAX || h > MAX) {
-          if (w > h) { h = h * MAX / w; w = MAX; }
-          else { w = w * MAX / h; h = MAX; }
-        }
-        canvas.width = w;
-        canvas.height = h;
-        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-        resolve(canvas.toDataURL('image/jpeg', 0.85));
-      };
-      img.onerror = () => resolve(null);
-      img.src = url;
-    });
+    const dataUrl = await resizeToDataUrl(url);
     URL.revokeObjectURL(url);
     if (!dataUrl) { failed++; continue; }
     if (!isFinite(meta.lat)) noGps++;
     if (!isFinite(meta.dir)) noDir++;
-    stake.photos.push({ dataUrl, rotation: 0, meta, note: '', board: true });
+    lastPhoto = addPhotoToItem(stake, dataUrl, meta);
     added++;
-    renderStakes();
   }
   const msg = [];
+  if (added) msg.push(`写真${photoNoOf(lastPhoto)}まで${added}枚を「${itemName(stake)}」に追加し、写真帳・撮影方向図に反映しました`);
   if (failed) msg.push(`${failed}枚を読み込めませんでした（HEICの場合はJPEGにしてください）`);
   if (noGps) msg.push(`${noGps}枚に位置情報がありません`);
   else if (noDir) msg.push(`${noDir}枚に方位がありません`);
   if (msg.length) showToast(msg.join('。'));
-  else if (added) showToast(`${added}枚を追加しました（位置・方位あり）`);
 }
 
 function updateMetaField(field, value) {
@@ -1373,10 +1664,11 @@ function updateMetaField(field, value) {
     else { p.meta.dir = ((v % 360) + 360) % 360; p.meta.dirRef = 'T'; p.meta.dirSource = 'manual'; }
   } else {
     const v = parseFloat(value);
-    if (value === '' || !isFinite(v)) delete p.meta[field]; else p.meta[field] = v;
+    if (value === '' || !isFinite(v)) delete p.meta[field]; else { p.meta[field] = v; p.meta.posSource = 'manual'; }
   }
   fillMetaForm(p);
   renderStakes();
+  if (document.getElementById('tab-preview').classList.contains('active')) renderPreview();
 }
 function fillMetaForm(p) {
   const m = p.meta || {};
@@ -1385,22 +1677,58 @@ function fillMetaForm(p) {
   document.getElementById('meta-lon').value = isFinite(m.lon) ? m.lon.toFixed(8) : '';
   document.getElementById('meta-note').value = p.note || '';
   document.getElementById('meta-board').checked = p.board !== false;
+  document.getElementById('meta-move').innerHTML = stakes.map((s, i) =>
+    `<option value="${s.id}" ${s.id === currentModalStakeId ? 'selected' : ''}>${i + 1}. ${escSide(itemName(s))}（${escSide(itemSub(s))}）</option>`).join('');
   const xy = photoXY(p), z = currentZone();
   const lines = [];
+  lines.push(`写真番号：${photoNoOf(p) || '―'}`);
   lines.push(`撮影日時：${m.dateTime ? exifDateToWareki(m.dateTime) : '記録なし'}`);
   lines.push(`撮影方向：${fmtDir(m) || '記録なし（上の欄に手入力できます）'}`);
-  lines.push(`撮影位置：${xy ? `X=${xy.x.toFixed(3)}　Y=${xy.y.toFixed(3)}（第${ROMAN[z]}系）` : '記録なし'}`);
+  lines.push(`撮影位置：${xy ? `X=${xy.x.toFixed(3)}　Y=${xy.y.toFixed(3)}（第${ROMAN[z]}系）${m.posSource === 'app' ? '・アプリの現在地' : m.posSource === 'manual' ? '・手入力' : ''}` : '記録なし'}`);
   if (isFinite(m.hErr)) lines.push(`位置の誤差目安：約${m.hErr.toFixed(1)}m`);
   if (isFinite(m.alt)) lines.push(`標高（GPS）：${m.alt.toFixed(1)}m`);
-  if (m.model) lines.push(`機種：${m.model}`);
+  if (m.model) lines.push(`機種：${escSide(m.model)}`);
   document.getElementById('meta-info').innerHTML = lines.join('<br>');
+}
+// 写真を別の境界点・撮影箇所へ付け替え
+function movePhotoTo(targetId) {
+  const from = stakes.find(s => s.id === currentModalStakeId), to = stakes.find(s => s.id === targetId);
+  if (!from || !to || from === to) return;
+  const [p] = from.photos.splice(currentModalPhotoIdx, 1);
+  to.photos.push(p);
+  currentModalStakeId = to.id; currentModalPhotoIdx = to.photos.length - 1;
+  fillMetaForm(p);
+  renderStakes();
+  if (document.getElementById('tab-preview').classList.contains('active')) renderPreview();
+  showToast(`写真を「${itemName(to)}」に移しました（写真番号：${photoNoOf(p)}）`);
+}
+function removeModalPhoto() {
+  if (!confirm('この写真を削除しますか？')) return;
+  closeImageModal();
+  removePhoto(currentModalStakeId, currentModalPhotoIdx);
+}
+function showModalPhotoInLedger() {
+  const s = stakes.find(t => t.id === currentModalStakeId);
+  const p = s && s.photos[currentModalPhotoIdx];
+  closeImageModal();
+  if (p) showInLedger(photoNoOf(p));
+}
+function showInLedger(no) {
+  switchTab('preview');
+  const el = document.querySelector(`.photo-entry[data-photo-no="${no}"]`);
+  if (!el) return;
+  el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  el.classList.add('flash');
+  setTimeout(() => el.classList.remove('flash'), 1500);
 }
 
 function removePhoto(stakeId, photoIdx) {
   const stake = stakes.find(s => s.id === stakeId);
   if (stake) {
-    stake.photos.splice(photoIdx, 1);
+    const [p] = stake.photos.splice(photoIdx, 1);
+    if (lastShot && lastShot.photo === p) lastShot = null;
     renderStakes();
+    if (document.getElementById('tab-preview').classList.contains('active')) renderPreview();
   }
 }
 
@@ -1416,7 +1744,8 @@ function openImageModal(stakeId, photoIdx) {
   currentModalStakeId = stakeId;
   currentModalPhotoIdx = photoIdx;
   const stake = stakes.find(s => s.id === stakeId);
-  const photo = stake.photos[photoIdx];
+  const photo = stake && stake.photos[photoIdx];
+  if (!photo) return;
   const img = document.getElementById('modalImage');
   img.src = photo.dataUrl;
   currentRotation = photo.rotation || 0;
@@ -1436,53 +1765,43 @@ function rotateModalImage(deg) {
   const stake = stakes.find(s => s.id === currentModalStakeId);
   if (stake && stake.photos[currentModalPhotoIdx]) {
     stake.photos[currentModalPhotoIdx].rotation = currentRotation;
+    renderStakes();
+    if (document.getElementById('tab-preview').classList.contains('active')) renderPreview();
   }
 }
 
 // ===== RENDER STAKES =====
-function renderStakes() {
-  const list = document.getElementById('stakeList');
-  if (stakes.length === 0) {
-    list.innerHTML = `
-      <div class="empty-state">
-        <div class="icon">📍</div>
-        <p>境界点がありません。<br>「境界点を追加」ボタンから追加してください。</p>
-      </div>`;
-    return;
-  }
-
-  list.innerHTML = stakes.map((s, idx) => `
-    <div class="stake-item" draggable="true" data-id="${s.id}"
-         ondragstart="onDragStart(event)" ondragover="onDragOver(event)"
-         ondrop="onDrop(event)" ondragend="onDragEnd(event)">
-      <div class="stake-header">
-        <span class="drag-handle">⠿</span>
-        <span class="stake-number">${idx + 1}</span>
-        <span class="stake-summary">
-          ${s.pointNumber} ／ ${s.stakeType} ／ 写真 ${s.photos.length}枚
-        </span>
-        <button class="btn btn-sm btn-danger" onclick="removeStake(${s.id})">削除</button>
-      </div>
-      <div class="stake-body">
-        <div class="stake-info">
+function optionsHTML(list, cur) { return list.map(t => `<option ${cur === t ? 'selected' : ''}>${t}</option>`).join(''); }
+function itemFormHTML(s) {
+  if (pattern === 'building') return `
+          <div class="form-group">
+            <label class="form-label">撮影箇所</label>
+            <input class="form-input" list="bldPlaces" value="${escSide(s.place || '')}" placeholder="例：外観（南側）、居間"
+                   onchange="updateStakeField(${s.id},'place',this.value);renderStakes()">
+          </div>
+          <div class="coord-row" style="grid-template-columns:1fr 1fr">
+            <div class="form-group">
+              <label class="form-label">区分</label>
+              <select class="form-select" onchange="updateStakeField(${s.id},'bcat',this.value)">${optionsHTML(BLD_CATS, s.bcat || '外観')}</select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">階</label>
+              <select class="form-select" onchange="updateStakeField(${s.id},'floor',this.value)">${optionsHTML(BLD_FLOORS, s.floor || '―')}</select>
+            </div>
+          </div>`;
+  return `
           <div class="form-group">
             <label class="form-label">境界点番号</label>
-            <input class="form-input" value="${s.pointNumber}"
+            <input class="form-input" value="${escSide(s.pointNumber)}"
                    onchange="updateStakeField(${s.id},'pointNumber',this.value)">
           </div>
           <div class="form-group">
             <label class="form-label">杭種</label>
-            <select class="form-select" onchange="updateStakeField(${s.id},'stakeType',this.value)">
-              ${['コンクリート杭','金属標','プラスチック杭','木杭','石杭','鋲','刻み','ペンキ','その他']
-                .map(t => `<option ${s.stakeType===t?'selected':''}>${t}</option>`).join('')}
-            </select>
+            <select class="form-select" onchange="updateStakeField(${s.id},'stakeType',this.value)">${optionsHTML(STAKE_TYPES, s.stakeType)}</select>
           </div>
           <div class="form-group">
             <label class="form-label">設置状況</label>
-            <select class="form-select" onchange="updateStakeField(${s.id},'condition',this.value)">
-              ${['新設','復元','既設']
-                .map(t => `<option ${s.condition===t?'selected':''}>${t}</option>`).join('')}
-            </select>
+            <select class="form-select" onchange="updateStakeField(${s.id},'condition',this.value)">${optionsHTML(CONDITIONS, s.condition)}</select>
           </div>
           <div class="coord-row">
             <div class="form-group">
@@ -1496,22 +1815,50 @@ function renderStakes() {
                      onchange="updateStakeField(${s.id},'y',this.value===''?'':parseFloat(this.value).toFixed(3));this.value=stakes.find(t=>t.id===${s.id}).y">
             </div>
             <button class="btn btn-sm" onclick="copyPhotoXY(${s.id})" title="位置情報のある最初の写真の撮影位置を入れます（GPSのため目安）">📍写真の位置</button>
-          </div>
+          </div>`;
+}
+function renderStakes() {
+  const list = document.getElementById('stakeList');
+  if (stakes.length === 0) {
+    list.innerHTML = `
+      <div class="empty-state">
+        <div class="icon">${pattern === 'building' ? '🏠' : '📍'}</div>
+        <p>${P().item}がありません。<br>「${P().item}を追加」ボタン、または「📷 カメラで撮影」から追加してください。</p>
+      </div>`;
+    return;
+  }
+  const nos = new Map(photoEntries().map(e => [e.photo, e.no]));
 
+  list.innerHTML = stakes.map((s, idx) => `
+    <div class="stake-item" draggable="true" data-id="${s.id}"
+         ondragstart="onDragStart(event)" ondragover="onDragOver(event)"
+         ondrop="onDrop(event)" ondragend="onDragEnd(event)">
+      <div class="stake-header">
+        <span class="drag-handle">⠿</span>
+        <span class="stake-number">${idx + 1}</span>
+        <span class="stake-summary">
+          ${escSide(itemName(s))} ／ ${escSide(itemSub(s))} ／ 写真 ${s.photos.length}枚
+        </span>
+        <button class="btn btn-sm btn-danger" onclick="removeStake(${s.id})">削除</button>
+      </div>
+      <div class="stake-body">
+        <div class="stake-info">
+          ${itemFormHTML(s)}
           <div class="form-group">
             <label class="form-label">備考</label>
             <textarea class="form-textarea" placeholder="備考を入力"
-                      onchange="updateStakeField(${s.id},'notes',this.value)">${s.notes || ''}</textarea>
+                      onchange="updateStakeField(${s.id},'notes',this.value)">${escSide(s.notes || '')}</textarea>
           </div>
         </div>
         <div class="stake-photos">
-          <label class="form-label">写真</label>
+          <label class="form-label">写真（番号は写真帳・撮影方向図と共通）</label>
           <div class="photo-grid">
             ${s.photos.map((p, pi) => `
               <div class="photo-thumb" onclick="openImageModal(${s.id},${pi})">
                 <img src="${p.dataUrl}" style="transform:rotate(${p.rotation||0}deg)">
                 <div class="photo-meta-badge">${(() => { const m = p.meta || {};
-                  return (isFinite(m.dir) ? `<span>🧭${dirName(m.dir)} ${m.dir.toFixed(0)}°</span>` : '<span class="warn">方位なし</span>')
+                  return `<span>No.${nos.get(p)}</span>`
+                       + (isFinite(m.dir) ? `<span>🧭${dirName(m.dir)} ${m.dir.toFixed(0)}°</span>` : '<span class="warn">方位なし</span>')
                        + (isFinite(m.lat) ? '<span>📍位置</span>' : '<span class="warn">位置なし</span>')
                        + (p.note ? '<span>📝</span>' : '') + (p.board === false ? '' : '<span>黒板</span>'); })()}</div>
 
@@ -1522,11 +1869,14 @@ function renderStakes() {
               </div>
             `).join('')}
           </div>
+          <div class="item-shot-btns">
+            <button class="btn btn-primary btn-sm" onclick="openCamera(${s.id})">📷 この${P().item}を撮影</button>
+          </div>
           <div class="photo-drop-zone"
                ondragover="event.preventDefault();this.classList.add('dragover')"
                ondragleave="this.classList.remove('dragover')"
                ondrop="handlePhotoDrop(event,${s.id})">
-            <div class="photo-drop-icon">📷</div>
+            <div class="photo-drop-icon">🖼</div>
             <div>写真をドラッグ＆ドロップ<br>またはクリックして選択</div>
             <input type="file" accept="image/*" multiple
                    onchange="processPhotoFiles(this.files,${s.id});this.value=''">
@@ -1535,6 +1885,41 @@ function renderStakes() {
       </div>
     </div>
   `).join('');
+}
+
+// 撮影先の選択肢・最新の写真
+function renderShotTarget() {
+  const sel = document.getElementById('shotTarget');
+  if (!sel) return;
+  if (!stakes.some(s => s.id === shotTargetId)) shotTargetId = stakes.length ? stakes[stakes.length - 1].id : null;
+  sel.innerHTML = stakes.map((s, i) => `<option value="${s.id}" ${s.id === shotTargetId ? 'selected' : ''}>${i + 1}. ${escSide(itemName(s))}（${escSide(itemSub(s))}・写真${s.photos.length}枚）</option>`).join('')
+    + `<option value="new" ${shotTargetId === null ? 'selected' : ''}>＋ 新しい${P().item}を作って撮影</option>`;
+  const box = document.getElementById('lastShot');
+  const s = lastShot && stakes.find(t => t.id === lastShot.stakeId);
+  const pi = s ? s.photos.indexOf(lastShot.photo) : -1;
+  if (pi < 0) { box.innerHTML = ''; return; }
+  const no = photoNoOf(lastShot.photo), m = lastShot.photo.meta || {};
+  box.innerHTML = `<img src="${lastShot.photo.dataUrl}" alt="">
+    <span>最新：写真${no}（${escSide(itemName(s))}）${isFinite(m.dir) ? `・${dirName(m.dir)} ${m.dir.toFixed(0)}°` : '・方位なし'}${isFinite(m.lat) ? '・位置あり' : '・位置なし'}</span>
+    <button class="btn btn-sm" onclick="openImageModal(${s.id},${pi})">詳細</button>
+    <button class="btn btn-sm" onclick="showInLedger(${no})">📄 写真帳で見る</button>`;
+}
+
+// ===== 撮影方向図（編集画面・撮影と同時に更新） =====
+let liveMapTimer = null;
+function scheduleLiveMap() { clearTimeout(liveMapTimer); liveMapTimer = setTimeout(renderLiveMap, 150); }
+function renderLiveMap() {
+  const box = document.getElementById('liveMap');
+  if (!box) return;
+  const list = photoEntries();
+  const here = geo.lat !== null && Date.now() - geo.at < 60000 ? { lat: geo.lat, lon: geo.lon, dir: compass.heading } : null;
+  const map = buildDirectionMap(list, 120, 80, { screen: true, here, lastNo: lastShot ? photoNoOf(lastShot.photo) : null });
+  box.innerHTML = map ? map.svg : `<div class="empty-state" style="padding:30px 16px"><p>位置情報のある写真を撮ると、ここに撮影位置と撮影方向を描きます。<br>「方位・現在地を表示」を押すと現在地も表示します。</p></div>`;
+  const noPos = list.filter(e => !photoXY(e.photo)).length;
+  document.getElementById('liveMapLegend').innerHTML =
+    `● 撮影位置（数字は写真番号・押すと写真を開く）　→ 撮影方向${pattern === 'land' ? '　◎ 境界点（座標入力時）' : ''}　<span style="color:#2563eb">● 現在地</span>`
+    + (map ? `　縮尺 約1/${map.den}（画面の大きさにより変わります）` : '')
+    + (noPos ? `<br>位置情報のない写真 ${noPos}枚は図に入っていません（写真を開いて緯度経度を入力できます）` : '');
 }
 
 // ===== DRAG & DROP SORT =====
@@ -1599,6 +1984,9 @@ function renderPreview() {
   const date = toWareki(document.getElementById('field-date').value) || '―';
   const surveyor = document.getElementById('field-surveyor').value || '―';
   const project = document.getElementById('field-project').value || '―';
+  const kaoku = document.getElementById('field-kaoku').value || '―';
+  const L = P(), bld = pattern === 'building';
+  const placeInfo = bld ? `所在：${location}　地番：${chiban}　家屋番号：${kaoku}` : `所在地：${location}　地番：${chiban}`;
 
   // Adjust photo entry size based on photos per page and page size
   const imgMaxHeight = (() => {
@@ -1636,9 +2024,9 @@ function renderPreview() {
     const map = buildDirectionMap(photoList, Wmm, Hmm);
     const rows = photoList.map(e => {
       const m = e.photo.meta || {}, xy = photoXY(e.photo);
-      return `<tr><td>${e.no}</td><td>${e.stake.pointNumber}</td><td>${m.dateTime ? exifDateToWareki(m.dateTime) : '―'}</td>
+      return `<tr><td>${e.no}</td><td>${escSide(itemName(e.stake))}</td><td>${m.dateTime ? exifDateToWareki(m.dateTime) : '―'}</td>
         <td>${isFinite(m.dir) ? `${dirName(m.dir)} ${m.dir.toFixed(1)}°` : '―'}</td>
-        <td>${xy ? xy.x.toFixed(3) : '―'}</td><td>${xy ? xy.y.toFixed(3) : '―'}</td><td>${e.photo.note || ''}</td></tr>`;
+        <td>${xy ? xy.x.toFixed(3) : '―'}</td><td>${xy ? xy.y.toFixed(3) : '―'}</td><td>${escSide(e.photo.note || '')}</td></tr>`;
     }).join('');
     mapPage = `
     <div class="print-page ${sizeClass}">
@@ -1646,17 +2034,17 @@ function renderPreview() {
         <h2>撮 影 方 向 図</h2>
         <div class="page-header-info">
           <span>業務名：${project}</span>
-          <span>所在地：${location}　地番：${chiban}</span>
+          <span>${placeInfo}</span>
           <span>調査日：${date}</span>
         </div>
       </div>
-      ${map ? `<div class="dirmap-wrap">${map.svg}</div>` : '<div class="empty-state"><p>位置情報のある写真、または座標を入力した境界点がないため、図を作成できません。</p></div>'}
+      ${map ? `<div class="dirmap-wrap">${map.svg}</div>` : `<div class="empty-state"><p>位置情報のある写真${bld ? '' : '、または座標を入力した境界点'}がないため、図を作成できません。</p></div>`}
       <table class="dirmap-table">
-        <tr><th>写真</th><th>境界点</th><th>撮影日時</th><th>撮影方向</th><th>撮影位置 X（m）</th><th>Y（m）</th><th>備考</th></tr>
+        <tr><th>写真</th><th>${L.item}</th><th>撮影日時</th><th>撮影方向</th><th>撮影位置 X（m）</th><th>Y（m）</th><th>備考</th></tr>
         ${rows}
       </table>
       <div class="dirmap-note">
-        ● 撮影位置（赤丸の数字は写真番号）　→ 撮影方向（扇形は画角の目安）　◎ 境界点（座標を入力した点）　点線は写真と境界点の対応<br>
+        ● 撮影位置（赤丸の数字は写真番号）　→ 撮影方向（扇形は画角の目安）${bld ? '' : '　◎ 境界点（座標を入力した点）　点線は写真と境界点の対応'}<br>
         座標は世界測地系（JGD2011）平面直角座標系 第${ROMAN[zone]}系。撮影位置・方向はiPhoneのGPS・電子コンパスによる値で、数m・数度の誤差を含みます。背景地図は使用していません。
       </div>
       <div class="page-footer">
@@ -1669,10 +2057,10 @@ function renderPreview() {
   container.innerHTML = pages.map((page, pi) => `
     <div class="print-page ${sizeClass}" id="page-${pi}">
       <div class="page-header">
-        <h2>境 界 杭 写 真 台 帳</h2>
+        <h2>${L.titleSp}</h2>
         <div class="page-header-info">
           <span>業務名：${project}</span>
-          <span>所在地：${location}　地番：${chiban}</span>
+          <span>${placeInfo}</span>
           <span>調査日：${date}</span>
         </div>
       </div>
@@ -1680,27 +2068,24 @@ function renderPreview() {
       ${page.map(entry => {
         const s = entry.stake;
         const p = entry.photo;
+        const H = bld
+          ? [['撮影箇所', itemName(s)], ['区分', s.bcat || '外観'], ['階', s.floor || '―']]
+          : [['境界点', s.pointNumber], ['杭種', s.stakeType], ['状況', s.condition]];
+        const pi = p ? s.photos.indexOf(p) : -1;
         return `
-        <div class="photo-entry" style="margin-bottom:${entryMargin}">
+        <div class="photo-entry" style="margin-bottom:${entryMargin}" ${p ? `data-photo-no="${entry.no}"` : ''}>
           <div class="photo-entry-header" style="font-size:${headerFontSize}">
-            <div class="cell label" style="padding:${cellPadding}">境界点</div>
-            <div class="cell" style="flex:1;padding:${cellPadding}">${s.pointNumber}</div>
-            <div class="cell label" style="padding:${cellPadding}">杭種</div>
-            <div class="cell" style="flex:1;padding:${cellPadding}">${s.stakeType}</div>
-            <div class="cell label" style="padding:${cellPadding}">状況</div>
-            <div class="cell" style="flex:1;padding:${cellPadding}">${s.condition}</div>
+            ${H.map(([k, v]) => `<div class="cell label" style="padding:${cellPadding}">${k}</div><div class="cell" style="flex:1;padding:${cellPadding}">${escSide(v)}</div>`).join('')}
           </div>
           <div class="photo-entry-body">
-            <div class="photo-entry-img" style="max-height:${imgMaxHeight}px">
+            <div class="photo-entry-img" style="max-height:${imgMaxHeight}px" ${p ? `onclick="openImageModal(${s.id},${pi})" title="押すと写真の撮影情報を編集"` : ''}>
               ${p ? `<img src="${p.dataUrl}" style="transform:rotate(${p.rotation||0}deg)">` : '<span style="color:#aaa">写真なし</span>'}
               ${p && optNorth && p.meta && isFinite(p.meta.dir) ? northMarkSVG(p.meta.dir, perPage >= 6 ? 26 : 38) : ''}
               ${p && optBoard && p.board !== false ? blackboardHTML(s, p, perPage >= 4) : ''}
             </div>
             <div class="photo-entry-details" style="padding:${detailPadding};font-size:${detailFontSize}">
-              <div class="detail-row"><span class="detail-label">境界点：</span>${s.pointNumber}</div>
-              <div class="detail-row"><span class="detail-label">杭　種：</span>${s.stakeType}</div>
-              <div class="detail-row"><span class="detail-label">状　況：</span>${s.condition}</div>
-              <div class="detail-row"><span class="detail-label">備　考：</span>${[s.notes, p && p.note].filter(Boolean).join('／') || '―'}</div>
+              ${H.map(([k, v]) => `<div class="detail-row"><span class="detail-label">${k.length === 2 ? k[0] + '　' + k[1] : k}：</span>${escSide(v)}</div>`).join('')}
+              <div class="detail-row"><span class="detail-label">備　考：</span>${escSide([s.notes, p && p.note].filter(Boolean).join('／')) || '―'}</div>
               ${p && optShot ? (() => {
                 const m = p.meta || {}, xy = photoXY(p);
                 return `<div class="detail-row"><span class="detail-label">写真番号：</span>${entry.no}</div>`
@@ -1726,7 +2111,8 @@ function renderPreview() {
 function buildSaveData() {
   return {
     app: 'StakePhotoDrop',
-    version: '1.1',
+    version: '1.2',
+    pattern,
     siteInfo: {
       location: document.getElementById('field-location').value,
       chiban: document.getElementById('field-chiban').value,
@@ -1734,6 +2120,7 @@ function buildSaveData() {
       surveyor: document.getElementById('field-surveyor').value,
       project: document.getElementById('field-project').value,
       client: document.getElementById('field-client').value,
+      kaoku: document.getElementById('field-kaoku').value,
       zone: currentZone(),
     },
     stakes
@@ -1749,28 +2136,30 @@ function exportJSON() {
   showToast('データを保存しました');
 }
 
+function applySaveData(data) {
+  const si = data.siteInfo || {};
+  document.getElementById('field-location').value = si.location || '';
+  document.getElementById('field-chiban').value = si.chiban || '';
+  document.getElementById('field-date').value = si.date || localISODate();
+  document.getElementById('field-surveyor').value = si.surveyor || '';
+  document.getElementById('field-project').value = si.project || '';
+  document.getElementById('field-client').value = si.client || '';
+  document.getElementById('field-kaoku').value = si.kaoku || '';
+  if (si.zone) document.getElementById('field-zone').value = si.zone;
+  stakes = Array.isArray(data.stakes) ? data.stakes : [];
+  stakes.forEach(s => { s.photos = s.photos || []; });
+  stakeIdCounter = Math.max(0, ...stakes.map(s => s.id || 0));
+  shotTargetId = stakes.length ? stakes[stakes.length - 1].id : null;
+  lastShot = null;
+  setPattern(data.pattern || 'land', true);   // 旧版（v1.1以前）は土地
+}
 function importJSON(e) {
   const file = e.target.files[0];
   if (!file) return;
   const reader = new FileReader();
   reader.onload = (ev) => {
     try {
-      const data = JSON.parse(ev.target.result);
-      if (data.siteInfo) {
-        document.getElementById('field-location').value = data.siteInfo.location || '';
-        document.getElementById('field-chiban').value = data.siteInfo.chiban || '';
-        document.getElementById('field-date').value = data.siteInfo.date || '';
-        document.getElementById('field-surveyor').value = data.siteInfo.surveyor || '';
-        document.getElementById('field-project').value = data.siteInfo.project || '';
-        document.getElementById('field-client').value = data.siteInfo.client || '';
-        if (data.siteInfo.zone) document.getElementById('field-zone').value = data.siteInfo.zone;
-      }
-      if (data.stakes) {
-        stakes = data.stakes;
-        stakeIdCounter = Math.max(0, ...stakes.map(s => s.id));
-      }
-      renderStakes();
-      updateStakeCount();
+      applySaveData(JSON.parse(ev.target.result));
       showToast('データを読み込みました');
     } catch (err) {
       showToast('読み込みに失敗しました');
@@ -1778,6 +2167,56 @@ function importJSON(e) {
   };
   reader.readAsText(file);
   e.target.value = '';
+}
+
+// ===== 端末内の一時保存（IndexedDB・外部送信なし） =====
+// iPhoneでカメラを開くとページが再読み込みされることがあるため、作業内容を自動で端末内に残す
+const AUTOSAVE = { db: null, timer: null, ready: false };
+function idb() {
+  if (AUTOSAVE.db) return Promise.resolve(AUTOSAVE.db);
+  return new Promise((res, rej) => {
+    try {
+      const r = indexedDB.open('StakePhotoDrop', 1);
+      r.onupgradeneeded = () => r.result.createObjectStore('work');
+      r.onsuccess = () => { AUTOSAVE.db = r.result; res(r.result); };
+      r.onerror = () => rej(r.error);
+    } catch (e) { rej(e); }
+  });
+}
+function scheduleAutosave() {
+  if (!AUTOSAVE.ready) return;
+  clearTimeout(AUTOSAVE.timer);
+  AUTOSAVE.timer = setTimeout(autosaveNow, 800);
+}
+async function autosaveNow() {
+  try {
+    const db = await idb();
+    const tx = db.transaction('work', 'readwrite');
+    tx.objectStore('work').put({ savedAt: Date.now(), data: JSON.parse(JSON.stringify(buildSaveData())) }, 'current');
+  } catch (e) { /* 保存できない環境（プライベートブラウズ等）では何もしない */ }
+}
+async function restoreAutosave() {
+  try {
+    const db = await idb();
+    const rec = await new Promise((res, rej) => {
+      const q = db.transaction('work', 'readonly').objectStore('work').get('current');
+      q.onsuccess = () => res(q.result); q.onerror = () => rej(q.error);
+    });
+    if (rec && rec.data && ((rec.data.stakes || []).length || (rec.data.siteInfo || {}).location)) {
+      applySaveData(rec.data);
+      const n = photoEntries().length;
+      showToast(`前回の作業を復元しました（${P().item}${stakes.length}・写真${n}枚／この端末内の一時保存）`);
+    }
+  } catch (e) { /* 使えない環境では復元しない */ }
+}
+async function newWork() {
+  if (!confirm('入力内容と写真を消して、新しい現場を始めますか？\n（必要なら先に「保存」または「フォルダに保存」をしてください）')) return;
+  stakes = []; stakeIdCounter = 0; shotTargetId = null; lastShot = null;
+  ['location', 'chiban', 'surveyor', 'project', 'client', 'kaoku'].forEach(k => document.getElementById('field-' + k).value = '');
+  document.getElementById('field-date').value = localISODate();
+  try { const db = await idb(); db.transaction('work', 'readwrite').objectStore('work').delete('current'); } catch (e) {}
+  setPattern(pattern, true);
+  showToast('新しい現場を始めました');
 }
 
 // ===== PRINT =====
@@ -1831,8 +2270,8 @@ async function exportPDF() {
 
 // ===== GeoDrop風サイドバー =====
 const MAIN_HEADS = {
-  edit: ['編集', '現場情報を入れ、境界点ごとに写真をドロップしてください。データはこの端末の中だけで扱います。'],
-  preview: ['プレビュー・印刷', '用紙と枚数を選んで、印刷・PDF出力・撮影位置CSVを出せます。']
+  edit: ['編集', '現場情報を入れ、境界点ごとに写真を撮影・追加してください。データはこの端末の中だけで扱います。'],
+  preview: ['プレビュー・印刷', '用紙と枚数を選んで、印刷・PDF出力・撮影位置CSVを出せます。写真を押すと撮影情報を直せます。']
 };
 function escSide(s) { return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 function renderSideStakes() {
@@ -1842,8 +2281,8 @@ function renderSideStakes() {
   box.innerHTML = stakes.map((s, i) => {
     const n = (s.photos || []).length;
     return `<button class="job" onclick="jumpToStake(${s.id})">
-      <div class="n">${i + 1}. ${escSide(s.pointNumber)}</div>
-      <div class="m"><span>${escSide(s.stakeType)}・${escSide(s.condition)}</span>
+      <div class="n">${i + 1}. ${escSide(itemName(s))}</div>
+      <div class="m"><span>${escSide(itemSub(s))}</span>
         <span class="chip ${n ? 'ok' : 'idle'}" style="margin-left:auto">写真 ${n}</span></div>
     </button>`;
   }).join('');
@@ -1860,12 +2299,16 @@ function addStakeFromSide() {
   addStake();
   if (stakes.length) jumpToStake(stakes[stakes.length - 1].id);
 }
-// 既存の描画・タブ切替のあとにサイドバーも更新する
+// 既存の描画・タブ切替のあとにサイドバー・撮影先・撮影方向図・一時保存も更新する
 {
   const _renderStakes = renderStakes;
-  renderStakes = function () { const r = _renderStakes.apply(this, arguments); renderSideStakes(); return r; };
+  renderStakes = function () {
+    const r = _renderStakes.apply(this, arguments);
+    renderSideStakes(); renderShotTarget(); scheduleLiveMap(); renderCamUI(); scheduleAutosave();
+    return r;
+  };
   const _updateStakeField = updateStakeField;
-  updateStakeField = function () { const r = _updateStakeField.apply(this, arguments); renderSideStakes(); return r; };
+  updateStakeField = function () { const r = _updateStakeField.apply(this, arguments); renderSideStakes(); renderCamUI(); return r; };
   const _switchTab = switchTab;
   switchTab = function (tab) {
     const r = _switchTab.apply(this, arguments);
@@ -1873,6 +2316,109 @@ function addStakeFromSide() {
     if (h) document.getElementById('mainHead').innerHTML = `<h2>${h[0]}</h2><div class="meta">${h[1]}</div>`;
     return r;
   };
+}
+
+// ===== アプリ内カメラ（方角を文字で表示・点名／杭種／現場名と連動） =====
+const cam = { stream: null, busy: false };
+async function openCamera(targetId) {
+  if (targetId) shotTargetId = targetId;
+  else { const v = document.getElementById('shotTarget').value; shotTargetId = v === 'new' ? null : parseInt(v); }
+  if (!stakes.some(s => s.id === shotTargetId)) addStake();
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    showToast('この画面ではカメラを使えません（iPhoneはHTTPSで開く必要があります）。「写真を選んで追加」を使ってください');
+    return;
+  }
+  startSensors();   // ボタン操作の中で方位・現在地の許可を求める
+  document.getElementById('camSite').value = document.getElementById('field-location').value;
+  document.getElementById('cam').classList.add('on');
+  renderCamUI(); updateCamDir();
+  try {
+    cam.stream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: { ideal: 'environment' }, width: { ideal: 4032 }, height: { ideal: 3024 } }, audio: false });
+    const v = document.getElementById('camVideo');
+    v.srcObject = cam.stream;
+    await v.play().catch(() => {});
+  } catch (e) {
+    closeCamera();
+    showToast('カメラを起動できませんでした。カメラの使用を許可してください（設定 → Safari → カメラ）');
+  }
+}
+function closeCamera() {
+  if (cam.stream) cam.stream.getTracks().forEach(t => t.stop());
+  cam.stream = null;
+  document.getElementById('camVideo').srcObject = null;
+  document.getElementById('cam').classList.remove('on');
+}
+function camMsg(t) {
+  const el = document.getElementById('camMsg');
+  el.innerHTML = t; el.classList.add('show');
+  clearTimeout(camMsg.timer); camMsg.timer = setTimeout(() => el.classList.remove('show'), 1600);
+}
+// カメラ画面の方角表示（文字）
+function updateCamDir() {
+  const big = document.getElementById('camDirBig'), small = document.getElementById('camDirSmall');
+  if (!big) return;
+  const fresh = compass.heading !== null && Date.now() - compass.at < 5000;
+  big.textContent = fresh ? `${dirName(compass.heading)}　${compass.heading.toFixed(0)}°` : '方位 ―';
+  const pos = geo.lat !== null && Date.now() - geo.at < 30000 ? `位置 ±${Math.round(geo.acc)}m` : '位置 取得中／なし';
+  small.textContent = fresh ? `カメラの向き（磁北基準）　${pos}` : `「🧭 方位」を押すと方角を表示します　${pos}`;
+}
+setInterval(() => { if (document.getElementById('cam').classList.contains('on')) updateCamDir(); }, 1000);
+// カメラ画面の点名・杭種などのボタン
+function renderCamUI() {
+  const chips = document.getElementById('camChips');
+  if (!chips || !document.getElementById('cam').classList.contains('on')) return;
+  const s = stakes.find(t => t.id === shotTargetId);
+  chips.innerHTML = stakes.map(t => `<button class="cam-chip ${t.id === shotTargetId ? 'on' : ''}" onclick="camSelect(${t.id})">${escSide(itemName(t))}${t.photos.length ? ` (${t.photos.length})` : ''}</button>`).join('')
+    + `<button class="cam-chip" onclick="camNewItem()">＋ 新しい${P().item}</button>`;
+  const on = chips.querySelector('.on'); if (on) on.scrollIntoView({ inline: 'center', block: 'nearest' });
+  const f = document.getElementById('camFields');
+  if (!s) { f.innerHTML = ''; }
+  else if (pattern === 'building') {
+    f.innerHTML = `<input list="bldPlaces" value="${escSide(s.place || '')}" placeholder="撮影箇所" onchange="updateStakeField(${s.id},'place',this.value);renderStakes()">
+      <select onchange="updateStakeField(${s.id},'bcat',this.value)">${optionsHTML(BLD_CATS, s.bcat || '外観')}</select>
+      <select onchange="updateStakeField(${s.id},'floor',this.value)">${optionsHTML(BLD_FLOORS, s.floor || '―')}</select>`;
+  } else {
+    f.innerHTML = `<input value="${escSide(s.pointNumber)}" placeholder="点名" onchange="updateStakeField(${s.id},'pointNumber',this.value);renderStakes()">
+      <select onchange="updateStakeField(${s.id},'stakeType',this.value)">${optionsHTML(STAKE_TYPES, s.stakeType)}</select>
+      <select onchange="updateStakeField(${s.id},'condition',this.value)">${optionsHTML(CONDITIONS, s.condition)}</select>`;
+  }
+  const thumb = document.getElementById('camThumb');
+  if (lastShot) thumb.src = lastShot.photo.dataUrl; else thumb.removeAttribute('src');
+  const n = photoEntries().length;
+  document.getElementById('camCount').textContent = s ? `${escSide(itemName(s))}：${s.photos.length}枚／計${n}枚` : `計${n}枚`;
+}
+function camSelect(id) { shotTargetId = id; renderCamUI(); renderShotTarget(); }
+function camNewItem() {
+  const s = addStake();
+  camMsg(`「${escSide(itemName(s))}」を追加しました`);
+}
+async function takeShot() {
+  const v = document.getElementById('camVideo');
+  if (cam.busy || !cam.stream || !v.videoWidth) { camMsg('カメラの準備中です'); return; }
+  const s = stakes.find(t => t.id === shotTargetId) || addStake();
+  cam.busy = true;
+  const fl = document.getElementById('camFlash');
+  fl.classList.add('go'); setTimeout(() => fl.classList.remove('go'), 60);
+  try {
+    const meta = { dateTime: nowExifDate() };
+    if (compass.heading !== null && Date.now() - compass.at < 5000)
+      Object.assign(meta, { dir: Math.round(compass.heading * 10) / 10, dirRef: compass.ref || 'M', dirSource: 'compass' });
+    Object.assign(meta, geoFallback(null) || {});
+    const dataUrl = await resizeToDataUrl(v);
+    const photo = addPhotoToItem(s, dataUrl, meta);
+    const no = photoNoOf(photo);
+    camMsg(`写真${no} → ${escSide(itemName(s))}<br><span style="font-size:12px;font-weight:400">${isFinite(meta.dir) ? dirName(meta.dir) + ' ' + meta.dir.toFixed(0) + '°' : '方位なし'}・${isFinite(meta.lat) ? '位置あり' : '位置なし'}　写真帳・撮影方向図に追加</span>`);
+  } catch (e) {
+    camMsg('撮影に失敗しました');
+  } finally { cam.busy = false; }
+}
+function openLastShot() {
+  if (!lastShot) return;
+  const s = stakes.find(t => t.id === lastShot.stakeId), pi = s ? s.photos.indexOf(lastShot.photo) : -1;
+  if (pi < 0) return;
+  closeCamera();
+  openImageModal(s.id, pi);
 }
 
 // ===== TOAST =====
@@ -1889,8 +2435,17 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('field-date').value = today;
   document.getElementById('field-zone').innerHTML = JGD_ZONES.slice(1).map((z, i) =>
     `<option value="${i + 1}" ${i + 1 === 6 ? 'selected' : ''}>第${ROMAN[i + 1]}系（${z[2]}）</option>`).join('');
-  renderStakes();
+  const dl = document.createElement('datalist'); dl.id = 'bldPlaces';
+  dl.innerHTML = BLD_PLACES.map(n => `<option value="${n}">`).join('');
+  document.body.appendChild(dl);
+  setPattern('land', true);
+  // 現場情報の入力も一時保存
+  document.getElementById('tab-edit').addEventListener('change', scheduleAutosave);
+  document.getElementById('tab-edit').addEventListener('input', scheduleAutosave);
+  restoreAutosave().finally(() => { AUTOSAVE.ready = true; });
 });
+// 方位・位置の表示更新（現在地マーカー）
+setInterval(() => { if (compass.heading !== null || geo.lat !== null) scheduleLiveMap(); }, 2000);
 </script>
 </body>
 </html>
