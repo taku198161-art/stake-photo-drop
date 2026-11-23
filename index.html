@@ -7,37 +7,42 @@
 <link rel="apple-touch-icon" href="StakePhotoDrop.png">
 <meta name="apple-mobile-web-app-title" content="StakePhotoDrop">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNTYgMjU2Ij4KICA8ZGVmcz4KICAgIDxsaW5lYXJHcmFkaWVudCBpZD0iYmciIHgxPSIwIiB5MT0iMCIgeDI9IjAiIHkyPSIxIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjMjM3NzRjIi8+CiAgICAgIDxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzE0NDcyZCIvPgogICAgPC9saW5lYXJHcmFkaWVudD4KICA8L2RlZnM+CiAgPHJlY3QgeD0iOCIgeT0iOCIgd2lkdGg9IjI0MCIgaGVpZ2h0PSIyNDAiIHJ4PSI1MiIgZmlsbD0idXJsKCNiZykiLz4KICA8IS0tIOOBl+OBmuOBjyAtLT4KICA8cGF0aCBkPSJNMTI4IDM0IEMxMjggMzQgNjIgMTEyIDYyIDE1NiBBNjYgNjYgMCAwIDAgMTk0IDE1NiBDMTk0IDExMiAxMjggMzQgMTI4IDM0IFoiIGZpbGw9IiNmZmZmZmYiLz4KICA8IS0tIOWig+eVjOadre+8iOmgremDqOOBruWNgeWtl++8iSAtLT4KICA8cmVjdCB4PSIxMDQiIHk9IjEyOCIgd2lkdGg9IjQ4IiBoZWlnaHQ9IjY2IiByeD0iNCIgZmlsbD0iIzFhNWMzYSIvPgogIDxwYXRoIGQ9Ik0xMDQgMTMyIEwxMjggMTE2IEwxNTIgMTMyIFoiIGZpbGw9IiMxYTVjM2EiLz4KICA8cGF0aCBkPSJNMTI4IDE0MCBWMTgyIE0xMDcgMTYxIEgxNDkiIHN0cm9rZT0iI2ZmZmZmZiIgc3Ryb2tlLXdpZHRoPSI4IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KICA8IS0tIOaSruW9seODnuODvOOCryAtLT4KICA8Y2lyY2xlIGN4PSIxODYiIGN5PSI3MCIgcj0iMjYiIGZpbGw9IiNlOGYyZWMiLz4KICA8Y2lyY2xlIGN4PSIxODYiIGN5PSI3MCIgcj0iMTIiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzFhNWMzYSIgc3Ryb2tlLXdpZHRoPSI3Ii8+Cjwvc3ZnPg==">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNTYgMjU2Ij4KICA8cmVjdCB4PSI4IiB5PSI4IiB3aWR0aD0iMjQwIiBoZWlnaHQ9IjI0MCIgcng9IjUyIiBmaWxsPSIjNGY0NmU1Ii8+CiAgPGcgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmZmZmZmIiBzdHJva2Utd2lkdGg9IjE0IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiPgogICAgPHBhdGggZD0iTTQ0IDg4IFY1NiBINzYiLz48cGF0aCBkPSJNMTgwIDU2IEgyMTIgVjg4Ii8+CiAgICA8cGF0aCBkPSJNMjEyIDE2OCBWMjAwIEgxODAiLz48cGF0aCBkPSJNNzYgMjAwIEg0NCBWMTY4Ii8+CiAgICA8cGF0aCBkPSJNOTYgOTYgSDE2MCBWMTcyIEwxMjggMjA2IEw5NiAxNzIgWiIvPgogIDwvZz4KICA8cGF0aCBkPSJNMTI4IDExMiBWMTU2IE0xMDYgMTM0IEgxNTAiIHN0cm9rZT0iI2ZiYmYyNCIgc3Ryb2tlLXdpZHRoPSIxNCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+Cjwvc3ZnPg==">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;600;700&family=IBM+Plex+Sans+JP:wght@400;500;600&display=swap');
 
   :root {
-    --bg: #f5f3f0;
+    /* 配色・部品は GeoDrop（C:\GeoDrop\app\web\index.html）と同じ */
+    --bg: #f4f6fb;
     --surface: #ffffff;
-    --surface-alt: #faf9f7;
-    --border: #d4d0ca;
-    --border-light: #e8e5e0;
-    --text: #2c2a26;
-    --text-mid: #5a5750;
-    --text-light: #8a867e;
-    --accent: #1a5c3a;
-    --accent-light: #e8f2ec;
-    --accent-hover: #14472d;
-    --danger: #c44;
-    --danger-light: #fef0f0;
-    --shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
-    --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
-    --shadow-lg: 0 8px 30px rgba(0,0,0,0.1);
-    --radius: 6px;
-    --radius-lg: 10px;
+    --surface-alt: #f8fafc;
+    --border: #e5e7eb;
+    --border-light: #e5e7eb;
+    --text: #1f2937;
+    --text-mid: #4b5563;
+    --text-light: #6b7280;
+    --accent: #4f46e5;
+    --accent-light: #eef2ff;
+    --accent-ink: #3730a3;
+    --accent-hover: #4338ca;
+    --ok: #15803d; --ok-soft: #dcfce7;
+    --warn: #c2410c; --warn-soft: #ffedd5;
+    --idle: #64748b; --idle-soft: #f1f5f9;
+    --danger: #b91c1c;
+    --danger-light: #fee2e2;
+    --shadow-sm: 0 4px 18px rgba(30,41,59,.07);
+    --shadow-md: 0 6px 22px rgba(30,41,59,.10);
+    --shadow-lg: 0 20px 50px rgba(15,23,42,.18);
+    --radius: 10px;
+    --radius-lg: 16px;
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
   body {
-    font-family: 'Noto Sans JP', 'IBM Plex Sans JP', sans-serif;
+    font-family: "Yu Gothic UI", "Meiryo", "Hiragino Sans", "Noto Sans JP", sans-serif;
+    font-size: 14px;
     background: var(--bg);
     color: var(--text);
     line-height: 1.6;
@@ -546,11 +551,102 @@
   .dirmap-table th { background: #eee; font-weight: 600; }
   .dirmap-note { font-size: 9px; color: #555; margin-top: 5px; line-height: 1.6; }
 
+
+  /* ===== GeoDrop統一（令和8年11月23日） ===== */
+  .app { display: grid; grid-template-columns: 300px 1fr; height: 100vh; }
+  .side { background: #fff; border-right: 1px solid var(--border); display: flex; flex-direction: column; min-height: 0; }
+  .brand { padding: 22px 22px 14px; display: flex; align-items: center; gap: 12px; }
+  .brand svg { width: 40px; height: 40px; border-radius: 10px; flex: none; }
+  .brand h1 { margin: 0; font-size: 20px; letter-spacing: .02em; line-height: 1.3; }
+  .brand p { margin: 2px 0 0; color: var(--text-light); font-size: 12.5px; }
+  .side .drop { margin: 0 18px 10px; border: 2px dashed #c7d2fe; border-radius: 14px; padding: 14px 12px; text-align: center;
+    color: var(--accent-ink); background: var(--accent-light); font: inherit; font-size: 12.5px; cursor: pointer; }
+  .side .drop b { display: block; font-size: 14px; margin-bottom: 2px; }
+  .side .drop:hover { border-color: var(--accent); }
+  .section-label { padding: 10px 22px 6px; font-size: 12px; color: var(--text-light); font-weight: 600; }
+  .nav { padding: 0 12px; }
+  .side .tab, .side .job { display: block; width: 100%; text-align: left; border: 0; background: none; border-radius: 12px;
+    padding: 11px 12px; margin: 2px 0; cursor: pointer; color: inherit; font: inherit; }
+  .side .tab:hover, .side .job:hover { background: var(--idle-soft); }
+  .side .tab.active { background: var(--accent-light); box-shadow: inset 3px 0 0 var(--accent); color: inherit; }
+  .side .tab .n, .side .job .n { font-weight: 700; font-size: 14.5px; }
+  .side .tab .m, .side .job .m { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--text-light); margin-top: 2px; }
+  .jobs { flex: 1; overflow: auto; padding: 0 12px 12px; min-height: 0; }
+  .jobs .empty-mini { color: var(--text-light); font-size: 12px; padding: 6px 12px; }
+  .chip { display: inline-flex; align-items: center; gap: 5px; border-radius: 999px; padding: 1px 9px; font-size: 11.5px; font-weight: 600; white-space: nowrap; }
+  .chip::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+  .chip.ok { background: var(--ok-soft); color: var(--ok); }
+  .chip.idle { background: var(--idle-soft); color: var(--idle); }
+  .side-foot { border-top: 1px solid var(--border); padding: 14px 18px; font-size: 12px; color: var(--text-light); }
+  .side-foot .ver { font-weight: 700; color: var(--accent-ink); margin-bottom: 8px; }
+  .side-foot .row2 { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
+  .side-foot .row2 .btn { flex: 1; justify-content: center; padding: 7px 8px; font-size: 12px; white-space: nowrap; }
+  .main { overflow: auto; padding: 28px 34px 40px; min-width: 0; }
+  .main-head { margin-bottom: 18px; }
+  .main-head h2 { font-size: 24px; margin: 0 0 4px; }
+  .main-head .meta { color: var(--text-light); font-size: 13px; }
+
+  /* 部品をGeoDropに合わせる */
+  .card { border: 0; border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); padding: 24px 28px; margin-bottom: 22px; }
+  .card-title { font-size: 16px; font-weight: 700; border-bottom: 0; padding-bottom: 0; margin-bottom: 14px; }
+  .card-title .badge { background: var(--accent-light); color: var(--accent-ink); font-weight: 700; border-radius: 999px; }
+  .btn { border-radius: var(--radius); border-color: var(--border); padding: 8px 14px; }
+  .btn:hover { background: #fff; border-color: var(--accent); color: var(--accent); }
+  .btn-primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .btn-primary:hover { background: var(--accent-hover); border-color: var(--accent-hover); color: #fff; }
+  .btn-danger { color: var(--danger); border-color: #fca5a5; }
+  .btn-danger:hover { background: #fef2f2; color: var(--danger); border-color: var(--danger); }
+  .form-label { font-weight: 600; color: var(--text-light); }
+  .form-input, .form-select, .form-textarea { border-radius: var(--radius); border-color: var(--border); }
+  .form-input:focus, .form-select:focus, .form-textarea:focus { border-color: var(--accent); box-shadow: none; outline: 2px solid var(--accent); }
+  .stake-item { border-color: var(--border); border-radius: 12px; }
+  .stake-item.flash { box-shadow: 0 0 0 3px var(--accent); }
+  .stake-header { background: var(--surface-alt); border-bottom-color: var(--border); }
+  .photo-drop-zone { border: 2px dashed #c7d2fe; border-radius: 14px; background: var(--accent-light); color: var(--accent-ink); }
+  .photo-drop-zone:hover, .photo-drop-zone.dragover { border-color: var(--accent); }
+  .photo-thumb { border-radius: var(--radius); border-color: var(--border); }
+  .add-stake-btn { border: 2px dashed #c7d2fe; border-radius: 12px; color: var(--accent-ink); }
+  .add-stake-btn:hover { background: var(--accent-light); border-color: var(--accent); }
+  .preview-controls { background: #fff; border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); padding: 14px 18px; }
+  .modal-overlay { background: rgba(15,23,42,.35); backdrop-filter: none; }
+  .modal { border-radius: 16px; padding: 26px 28px; }
+  .toast { background: #111827; border-radius: 10px; padding: 10px 16px; }
+  .toast.show { opacity: .92; }
+  .compass-deg { color: var(--accent); }
+
+  /* 長い選択肢（座標系名など）で画面幅を超えないように */
+  .form-grid > *, .stake-body > *, .stake-info > *, .meta-form > *, .coord-row > * { min-width: 0; }
+  .form-input, .form-select, .form-textarea { max-width: 100%; min-width: 0; }
+  .form-group > .form-input, .form-group > .form-select, .form-group > .form-textarea { width: 100%; }
+
+  /* スマホ・タブレット：サイドバーを上部に */
+  @media (max-width: 900px) {
+    .app { display: block; height: auto; }
+    .side { position: sticky; top: 0; z-index: 100; border-right: 0; border-bottom: 1px solid var(--border); box-shadow: var(--shadow-sm); }
+    .brand { padding: 10px 14px 6px; }
+    .brand svg { width: 32px; height: 32px; }
+    .brand h1 { font-size: 17px; }
+    .side .drop, .section-label, .jobs, .side-foot .ver { display: none; }
+    .nav { display: flex; gap: 6px; padding: 0 10px 8px; }
+    .side .tab { margin: 0; padding: 7px 10px; text-align: center; }
+    .side .tab .m { display: none; }
+    .side-foot { position: absolute; top: 8px; right: 10px; border: 0; padding: 0; }
+    .side-foot .row2 { margin-top: 0; gap: 4px; flex-wrap: nowrap; }
+    .side-foot .row2 + .row2 { display: none; }
+    .side-foot .row2 .btn { padding: 6px 8px; }
+    .main { padding: 16px; overflow: visible; }
+    .main-head h2 { font-size: 20px; }
+    .card { padding: 18px 16px; }
+  }
+
   /* ===== PRINT ===== */
   @media print {
     body { background: white; }
-    .app-header, .tabs, .tab-content:not(.preview-active),
+    .app-header, .tabs, .side, .main-head, .tab-content:not(#tab-preview),
     .preview-controls, .no-print { display: none !important; }
+    .app { display: block; height: auto; }
+    .main { overflow: visible; padding: 0; }
+    #tab-preview { display: block !important; }
     .print-page {
       box-shadow: none;
       margin: 0;
@@ -573,29 +669,34 @@
 </head>
 <body>
 
-<!-- HEADER -->
-<header class="app-header">
-  <h1>
-    <span class="icon"><svg width="32" height="32" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><defs><linearGradient id="spdbg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#23774c"/><stop offset="1" stop-color="#14472d"/></linearGradient></defs><rect x="8" y="8" width="240" height="240" rx="52" fill="url(#spdbg)"/><path d="M128 34 C128 34 62 112 62 156 A66 66 0 0 0 194 156 C194 112 128 34 128 34 Z" fill="#ffffff"/><rect x="104" y="128" width="48" height="66" rx="4" fill="#1a5c3a"/><path d="M104 132 L128 116 L152 132 Z" fill="#1a5c3a"/><path d="M128 140 V182 M107 161 H149" stroke="#ffffff" stroke-width="8" stroke-linecap="round"/><circle cx="186" cy="70" r="26" fill="#e8f2ec"/><circle cx="186" cy="70" r="12" fill="none" stroke="#1a5c3a" stroke-width="7"/></svg></span>
-    StakePhotoDrop
-    <span class="app-sub">境界杭写真台帳</span>
-  </h1>
-  <div class="header-actions">
-    <button class="btn btn-primary" onclick="saveToFolder()" title="NASの案件フォルダ等に一括保存">📁 フォルダに保存</button>
-    <button class="btn" onclick="exportJSON()" title="データ保存">💾 保存</button>
-    <button class="btn" onclick="document.getElementById('importInput').click()" title="データ読込">📂 読込</button>
+<div class="app">
+<!-- サイドバー（GeoDrop風） -->
+<aside class="side">
+  <div class="brand"><svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><rect x="8" y="8" width="240" height="240" rx="52" fill="#4f46e5"/><g fill="none" stroke="#ffffff" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"><path d="M44 88 V56 H76"/><path d="M180 56 H212 V88"/><path d="M212 168 V200 H180"/><path d="M76 200 H44 V168"/><path d="M96 96 H160 V172 L128 206 L96 172 Z"/></g><path d="M128 112 V156 M106 134 H150" stroke="#fbbf24" stroke-width="14" stroke-linecap="round"/></svg><div><h1>StakePhotoDrop</h1><p>境界杭写真台帳</p></div></div>
+  <button class="drop" onclick="addStakeFromSide()"><b>＋ 境界点を追加</b>写真は各点の枠にドロップ</button>
+  <div class="section-label">画面</div>
+  <nav class="nav">
+    <button class="tab active" data-tab="edit" onclick="switchTab('edit')"><div class="n">編集</div><div class="m">現場情報・境界点・写真</div></button>
+    <button class="tab" data-tab="preview" onclick="switchTab('preview')"><div class="n">プレビュー・印刷</div><div class="m">PDF・撮影位置CSV</div></button>
+  </nav>
+  <div class="section-label">境界点</div>
+  <div class="jobs" id="sideStakes"></div>
+  <div class="side-foot">
+    <div class="ver">StakePhotoDrop v1.1</div>
+    <div class="row2">
+      <button class="btn btn-primary" onclick="saveToFolder()" title="NASの案件フォルダ等に一括保存">📁 フォルダに保存</button>
+    </div>
+    <div class="row2">
+      <button class="btn" onclick="exportJSON()" title="データ保存">💾 保存</button>
+      <button class="btn" onclick="document.getElementById('importInput').click()" title="データ読込">📂 読込</button>
+    </div>
     <input type="file" id="importInput" accept=".json" style="display:none" onchange="importJSON(event)">
   </div>
-</header>
+</aside>
 
-<!-- BODY -->
-<div class="app-body">
-
-  <!-- TABS -->
-  <div class="tabs">
-    <button class="tab active" data-tab="edit" onclick="switchTab('edit')">✏️ 編集</button>
-    <button class="tab" data-tab="preview" onclick="switchTab('preview')">🖨️ プレビュー・印刷</button>
-  </div>
+<!-- メイン -->
+<main class="main" id="main">
+  <div class="main-head" id="mainHead"><h2>編集</h2><div class="meta">現場情報を入れ、境界点ごとに写真をドロップしてください。データはこの端末の中だけで扱います。</div></div>
 
   <!-- === EDIT TAB === -->
   <div id="tab-edit" class="tab-content active">
@@ -643,14 +744,14 @@
         <div class="compass-dial">
           <svg viewBox="-50 -50 100 100">
             <g id="compassRose">
-              <circle r="46" fill="#fff" stroke="#d4d0ca" stroke-width="2"/>
+              <circle r="46" fill="#fff" stroke="#e5e7eb" stroke-width="2"/>
               <path d="M0,-22 L6,0 L-6,0 Z" fill="#c33"/><path d="M0,22 L6,0 L-6,0 Z" fill="#aaa"/>
               <text y="-30" font-size="12" text-anchor="middle" font-weight="700" fill="#c33" dominant-baseline="middle">北</text>
               <text x="34" font-size="10" text-anchor="middle" fill="#666" dominant-baseline="middle">東</text>
               <text y="32" font-size="10" text-anchor="middle" fill="#666" dominant-baseline="middle">南</text>
               <text x="-34" font-size="10" text-anchor="middle" fill="#666" dominant-baseline="middle">西</text>
             </g>
-            <path d="M0,-50 L5,-43 L-5,-43 Z" fill="#1a5c3a"/>
+            <path d="M0,-50 L5,-43 L-5,-43 Z" fill="#4f46e5"/>
           </svg>
         </div>
         <div style="flex:1;min-width:200px">
@@ -717,6 +818,7 @@
     </div>
     <div class="preview-container" id="previewContainer"></div>
   </div>
+</main>
 </div>
 
 <!-- TOAST -->
@@ -1724,6 +1826,53 @@ async function exportPDF() {
 
   pdf.save(buildFileName('pdf'));
   showToast('PDF出力完了');
+}
+
+
+// ===== GeoDrop風サイドバー =====
+const MAIN_HEADS = {
+  edit: ['編集', '現場情報を入れ、境界点ごとに写真をドロップしてください。データはこの端末の中だけで扱います。'],
+  preview: ['プレビュー・印刷', '用紙と枚数を選んで、印刷・PDF出力・撮影位置CSVを出せます。']
+};
+function escSide(s) { return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function renderSideStakes() {
+  const box = document.getElementById('sideStakes');
+  if (!box) return;
+  if (!stakes.length) { box.innerHTML = '<div class="empty-mini">まだありません</div>'; return; }
+  box.innerHTML = stakes.map((s, i) => {
+    const n = (s.photos || []).length;
+    return `<button class="job" onclick="jumpToStake(${s.id})">
+      <div class="n">${i + 1}. ${escSide(s.pointNumber)}</div>
+      <div class="m"><span>${escSide(s.stakeType)}・${escSide(s.condition)}</span>
+        <span class="chip ${n ? 'ok' : 'idle'}" style="margin-left:auto">写真 ${n}</span></div>
+    </button>`;
+  }).join('');
+}
+function jumpToStake(id) {
+  switchTab('edit');
+  const el = document.querySelector(`.stake-item[data-id="${id}"]`);
+  if (!el) return;
+  el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  el.classList.add('flash');
+  setTimeout(() => el.classList.remove('flash'), 1200);
+}
+function addStakeFromSide() {
+  addStake();
+  if (stakes.length) jumpToStake(stakes[stakes.length - 1].id);
+}
+// 既存の描画・タブ切替のあとにサイドバーも更新する
+{
+  const _renderStakes = renderStakes;
+  renderStakes = function () { const r = _renderStakes.apply(this, arguments); renderSideStakes(); return r; };
+  const _updateStakeField = updateStakeField;
+  updateStakeField = function () { const r = _updateStakeField.apply(this, arguments); renderSideStakes(); return r; };
+  const _switchTab = switchTab;
+  switchTab = function (tab) {
+    const r = _switchTab.apply(this, arguments);
+    const h = MAIN_HEADS[tab];
+    if (h) document.getElementById('mainHead').innerHTML = `<h2>${h[0]}</h2><div class="meta">${h[1]}</div>`;
+    return r;
+  };
 }
 
 // ===== TOAST =====
