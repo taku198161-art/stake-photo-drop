@@ -1,0 +1,1747 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>StakePhotoDrop｜境界杭写真台帳</title>
+<link rel="apple-touch-icon" href="StakePhotoDrop.png">
+<meta name="apple-mobile-web-app-title" content="StakePhotoDrop">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNTYgMjU2Ij4KICA8ZGVmcz4KICAgIDxsaW5lYXJHcmFkaWVudCBpZD0iYmciIHgxPSIwIiB5MT0iMCIgeDI9IjAiIHkyPSIxIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjMjM3NzRjIi8+CiAgICAgIDxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzE0NDcyZCIvPgogICAgPC9saW5lYXJHcmFkaWVudD4KICA8L2RlZnM+CiAgPHJlY3QgeD0iOCIgeT0iOCIgd2lkdGg9IjI0MCIgaGVpZ2h0PSIyNDAiIHJ4PSI1MiIgZmlsbD0idXJsKCNiZykiLz4KICA8IS0tIOOBl+OBmuOBjyAtLT4KICA8cGF0aCBkPSJNMTI4IDM0IEMxMjggMzQgNjIgMTEyIDYyIDE1NiBBNjYgNjYgMCAwIDAgMTk0IDE1NiBDMTk0IDExMiAxMjggMzQgMTI4IDM0IFoiIGZpbGw9IiNmZmZmZmYiLz4KICA8IS0tIOWig+eVjOadre+8iOmgremDqOOBruWNgeWtl++8iSAtLT4KICA8cmVjdCB4PSIxMDQiIHk9IjEyOCIgd2lkdGg9IjQ4IiBoZWlnaHQ9IjY2IiByeD0iNCIgZmlsbD0iIzFhNWMzYSIvPgogIDxwYXRoIGQ9Ik0xMDQgMTMyIEwxMjggMTE2IEwxNTIgMTMyIFoiIGZpbGw9IiMxYTVjM2EiLz4KICA8cGF0aCBkPSJNMTI4IDE0MCBWMTgyIE0xMDcgMTYxIEgxNDkiIHN0cm9rZT0iI2ZmZmZmZiIgc3Ryb2tlLXdpZHRoPSI4IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KICA8IS0tIOaSruW9seODnuODvOOCryAtLT4KICA8Y2lyY2xlIGN4PSIxODYiIGN5PSI3MCIgcj0iMjYiIGZpbGw9IiNlOGYyZWMiLz4KICA8Y2lyY2xlIGN4PSIxODYiIGN5PSI3MCIgcj0iMTIiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzFhNWMzYSIgc3Ryb2tlLXdpZHRoPSI3Ii8+Cjwvc3ZnPg==">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;600;700&family=IBM+Plex+Sans+JP:wght@400;500;600&display=swap');
+
+  :root {
+    --bg: #f5f3f0;
+    --surface: #ffffff;
+    --surface-alt: #faf9f7;
+    --border: #d4d0ca;
+    --border-light: #e8e5e0;
+    --text: #2c2a26;
+    --text-mid: #5a5750;
+    --text-light: #8a867e;
+    --accent: #1a5c3a;
+    --accent-light: #e8f2ec;
+    --accent-hover: #14472d;
+    --danger: #c44;
+    --danger-light: #fef0f0;
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
+    --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
+    --shadow-lg: 0 8px 30px rgba(0,0,0,0.1);
+    --radius: 6px;
+    --radius-lg: 10px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Noto Sans JP', 'IBM Plex Sans JP', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* ===== HEADER ===== */
+  .app-header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: var(--shadow-sm);
+  }
+  .app-header h1 {
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .app-header h1 .icon {
+    width: 32px; height: 32px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .app-header h1 .app-sub {
+    font-size: 12px;
+    font-weight: 400;
+    color: var(--text-light);
+    letter-spacing: 0;
+  }
+  .header-actions { display: flex; gap: 8px; }
+
+  /* ===== BUTTONS ===== */
+  .btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 8px 16px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--surface);
+    color: var(--text);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s;
+    font-family: inherit;
+  }
+  .btn:hover { background: var(--surface-alt); border-color: #bbb; }
+  .btn-primary {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+  }
+  .btn-primary:hover { background: var(--accent-hover); }
+  .btn-danger { color: var(--danger); }
+  .btn-danger:hover { background: var(--danger-light); }
+  .btn-sm { padding: 5px 10px; font-size: 12px; }
+  .btn-icon {
+    width: 32px; height: 32px; padding: 0;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: var(--radius);
+  }
+
+  /* ===== LAYOUT ===== */
+  .app-body {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 24px;
+  }
+
+  /* ===== TABS ===== */
+  .tabs {
+    display: flex; gap: 4px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 4px;
+    margin-bottom: 24px;
+    box-shadow: var(--shadow-sm);
+  }
+  .tab {
+    flex: 1;
+    padding: 10px 20px;
+    border: none;
+    background: transparent;
+    border-radius: var(--radius);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    color: var(--text-mid);
+    transition: all 0.2s;
+    font-family: inherit;
+  }
+  .tab:hover { color: var(--text); background: var(--surface-alt); }
+  .tab.active {
+    background: var(--accent);
+    color: #fff;
+    box-shadow: var(--shadow-sm);
+  }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  /* ===== CARDS ===== */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-lg);
+    padding: 24px;
+    margin-bottom: 20px;
+    box-shadow: var(--shadow-sm);
+  }
+  .card-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 16px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border-light);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .card-title .badge {
+    font-size: 11px;
+    background: var(--accent-light);
+    color: var(--accent);
+    padding: 2px 8px;
+    border-radius: 20px;
+    font-weight: 500;
+  }
+
+  /* ===== FORM ===== */
+  .form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 16px;
+  }
+  .form-group { display: flex; flex-direction: column; gap: 4px; }
+  .form-group.full { grid-column: 1 / -1; }
+  .form-label {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-mid);
+  }
+  .form-input, .form-select, .form-textarea {
+    padding: 8px 12px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    font-size: 14px;
+    font-family: inherit;
+    color: var(--text);
+    background: var(--surface);
+    transition: border-color 0.15s;
+  }
+  .form-input:focus, .form-select:focus, .form-textarea:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-light);
+  }
+  .form-textarea { resize: vertical; min-height: 60px; }
+
+  /* ===== STAKE LIST ===== */
+  .stake-list { display: flex; flex-direction: column; gap: 16px; }
+  .stake-item {
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    background: var(--surface);
+    transition: box-shadow 0.2s;
+  }
+  .stake-item:hover { box-shadow: var(--shadow-md); }
+  .stake-item.dragging { opacity: 0.5; }
+  .stake-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    background: var(--surface-alt);
+    border-bottom: 1px solid var(--border-light);
+    cursor: grab;
+  }
+  .stake-header:active { cursor: grabbing; }
+  .drag-handle {
+    color: var(--text-light);
+    font-size: 16px;
+    cursor: grab;
+    user-select: none;
+  }
+  .stake-number {
+    font-weight: 600;
+    font-size: 14px;
+    background: var(--accent);
+    color: #fff;
+    width: 28px; height: 28px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 50%;
+    font-size: 12px;
+  }
+  .stake-summary {
+    flex: 1;
+    font-size: 13px;
+    color: var(--text-mid);
+  }
+  .stake-body {
+    padding: 16px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  .stake-info { display: flex; flex-direction: column; gap: 12px; }
+  .stake-photos {
+    display: flex; flex-direction: column; gap: 8px;
+  }
+
+  /* ===== PHOTO UPLOAD ===== */
+  .photo-drop-zone {
+    border: 2px dashed var(--border);
+    border-radius: var(--radius);
+    padding: 24px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    color: var(--text-light);
+    font-size: 13px;
+    background: var(--surface-alt);
+    position: relative;
+  }
+  .photo-drop-zone:hover,
+  .photo-drop-zone.dragover {
+    border-color: var(--accent);
+    background: var(--accent-light);
+    color: var(--accent);
+  }
+  .photo-drop-zone input[type="file"] {
+    position: absolute; inset: 0; opacity: 0; cursor: pointer;
+  }
+  .photo-drop-icon { font-size: 28px; margin-bottom: 6px; }
+  .photo-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 8px;
+  }
+  .photo-thumb {
+    position: relative;
+    aspect-ratio: 4/3;
+    border-radius: var(--radius);
+    overflow: hidden;
+    border: 1px solid var(--border-light);
+    cursor: pointer;
+  }
+  .photo-thumb img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+  }
+  .photo-thumb .photo-actions {
+    position: absolute;
+    top: 4px; right: 4px;
+    display: flex; gap: 2px;
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  .photo-thumb:hover .photo-actions { opacity: 1; }
+  .photo-action-btn {
+    width: 24px; height: 24px;
+    background: rgba(0,0,0,0.6);
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .photo-action-btn:hover { background: rgba(0,0,0,0.8); }
+
+  /* ===== ADD STAKE BUTTON ===== */
+  .add-stake-btn {
+    width: 100%;
+    padding: 16px;
+    border: 2px dashed var(--border);
+    border-radius: var(--radius-lg);
+    background: transparent;
+    color: var(--text-light);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: inherit;
+  }
+  .add-stake-btn:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: var(--accent-light);
+  }
+
+  /* ===== PRINT PREVIEW ===== */
+  .preview-controls {
+    display: flex; align-items: center; gap: 12px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+  .preview-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+  }
+  .print-page {
+    background: white;
+    box-shadow: var(--shadow-lg);
+    padding: 12mm 15mm;
+    position: relative;
+    page-break-after: always;
+  }
+  .print-page.size-a4 {
+    width: 210mm;
+    min-height: 297mm;
+  }
+  .print-page.size-a3 {
+    width: 297mm;
+    min-height: 420mm;
+  }
+  .page-header {
+    text-align: center;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #333;
+    margin-bottom: 10px;
+  }
+  .page-header h2 {
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: 3px;
+  }
+  .page-header-info {
+    display: flex;
+    justify-content: space-between;
+    font-size: 10px;
+    margin-top: 4px;
+    color: #555;
+  }
+  .page-footer {
+    position: absolute;
+    bottom: 10mm;
+    left: 15mm;
+    right: 15mm;
+    display: flex;
+    justify-content: space-between;
+    font-size: 9px;
+    color: #888;
+    border-top: 1px solid #ccc;
+    padding-top: 4px;
+  }
+
+  .photo-entry {
+    border: 1px solid #999;
+    margin-bottom: 8px;
+    page-break-inside: avoid;
+  }
+  .photo-entry-header {
+    display: flex;
+    background: #f0f0f0;
+    font-size: 11px;
+    border-bottom: 1px solid #999;
+  }
+  .photo-entry-header .cell {
+    padding: 4px 8px;
+    border-right: 1px solid #999;
+    font-weight: 600;
+  }
+  .photo-entry-header .cell:last-child { border-right: none; }
+  .photo-entry-header .cell.label { width: 80px; background: #e8e8e8; }
+  .photo-entry-body {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+  .photo-entry-img {
+    aspect-ratio: 4/3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-right: 1px solid #999;
+    overflow: hidden;
+    background: #fafafa;
+    max-height: 200px;
+  }
+  .photo-entry-img img {
+    width: 100%; height: 100%;
+    object-fit: contain;
+  }
+  .photo-entry-details {
+    padding: 8px;
+    font-size: 11px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .photo-entry-details .detail-row {
+    display: flex;
+  }
+  .photo-entry-details .detail-label {
+    width: 70px;
+    font-weight: 600;
+    color: #555;
+    flex-shrink: 0;
+  }
+
+  /* ===== EMPTY STATE ===== */
+  .empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--text-light);
+  }
+  .empty-state .icon { font-size: 48px; margin-bottom: 12px; }
+  .empty-state p { font-size: 14px; }
+
+  /* ===== MODAL ===== */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 200;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(2px);
+  }
+  .modal-overlay.active { display: flex; }
+  .modal {
+    background: var(--surface);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
+    max-width: 600px;
+    width: 90%;
+    max-height: 90vh;
+    overflow: auto;
+    padding: 24px;
+  }
+  .modal-title {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  /* ===== TOAST ===== */
+  .toast {
+    position: fixed;
+    bottom: 24px; right: 24px;
+    background: var(--text);
+    color: #fff;
+    padding: 12px 20px;
+    border-radius: var(--radius);
+    font-size: 13px;
+    box-shadow: var(--shadow-lg);
+    z-index: 300;
+    transform: translateY(100px);
+    opacity: 0;
+    transition: all 0.3s;
+  }
+  .toast.show { transform: translateY(0); opacity: 1; }
+
+  /* ===== 撮影情報 ===== */
+  .photo-meta-badge {
+    position: absolute; left: 3px; bottom: 3px;
+    display: flex; gap: 2px; flex-wrap: wrap;
+  }
+  .photo-meta-badge span {
+    background: rgba(0,0,0,0.62); color: #fff; font-size: 10px;
+    padding: 1px 5px; border-radius: 3px; line-height: 1.5;
+  }
+  .photo-meta-badge span.warn { background: rgba(196,68,68,0.85); }
+  .coord-row { display: grid; grid-template-columns: 1fr 1fr auto; gap: 8px; align-items: end; }
+  .meta-form { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 14px; text-align: left; }
+  .meta-form .full { grid-column: 1 / -1; }
+  .meta-readonly { font-size: 12px; color: var(--text-mid); background: var(--surface-alt);
+    border: 1px solid var(--border-light); border-radius: var(--radius); padding: 8px 10px; line-height: 1.8; }
+  .help-box { font-size: 13px; color: var(--text-mid); line-height: 1.8; }
+  .help-box summary { cursor: pointer; font-weight: 600; color: var(--text); }
+  .help-box ul { margin: 8px 0 0 1.4em; }
+  .compass-card { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+  .compass-dial { width: 88px; height: 88px; position: relative; flex-shrink: 0; }
+  .compass-dial svg { width: 100%; height: 100%; }
+  #compassRose { transition: transform 0.15s linear; }
+  .compass-deg { font-size: 22px; font-weight: 700; color: var(--accent); }
+  .compass-status { font-size: 12px; color: var(--text-light); }
+  .chk { font-size: 13px; display: inline-flex; align-items: center; gap: 4px; color: var(--text-mid); cursor: pointer; }
+  .photo-entry-img { position: relative; }
+  .north-mark { position: absolute; top: 4px; right: 4px; }
+  .blackboard {
+    position: absolute; left: 4px; bottom: 4px; max-width: 58%;
+    background: #1f4a33; color: #fff; border: 2px solid #c9b88a;
+    font-size: 9px; line-height: 1.45; padding: 3px 6px; text-align: left;
+  }
+  .blackboard b { display: inline-block; width: 3.6em; font-weight: 600; color: #e8e2c8; }
+  .blackboard.small { font-size: 7px; padding: 2px 4px; border-width: 1px; }
+  .dirmap-wrap { display: flex; justify-content: center; margin-top: 6px; }
+  .dirmap-table { width: 100%; border-collapse: collapse; font-size: 9.5px; margin-top: 8px; }
+  .dirmap-table th, .dirmap-table td { border: 1px solid #999; padding: 2px 5px; text-align: left; }
+  .dirmap-table th { background: #eee; font-weight: 600; }
+  .dirmap-note { font-size: 9px; color: #555; margin-top: 5px; line-height: 1.6; }
+
+  /* ===== PRINT ===== */
+  @media print {
+    body { background: white; }
+    .app-header, .tabs, .tab-content:not(.preview-active),
+    .preview-controls, .no-print { display: none !important; }
+    .print-page {
+      box-shadow: none;
+      margin: 0;
+      padding: 10mm 15mm;
+      width: 100%;
+    }
+    .preview-container { gap: 0; }
+    @page { margin: 0; }
+  }
+
+  /* ===== RESPONSIVE ===== */
+  @media (max-width: 768px) {
+    .app-header { padding: 12px 16px; }
+    .app-body { padding: 16px; }
+    .stake-body { grid-template-columns: 1fr; }
+    .form-grid { grid-template-columns: 1fr; }
+    .print-page { width: 100%; min-height: auto; padding: 8mm; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="app-header">
+  <h1>
+    <span class="icon"><svg width="32" height="32" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><defs><linearGradient id="spdbg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#23774c"/><stop offset="1" stop-color="#14472d"/></linearGradient></defs><rect x="8" y="8" width="240" height="240" rx="52" fill="url(#spdbg)"/><path d="M128 34 C128 34 62 112 62 156 A66 66 0 0 0 194 156 C194 112 128 34 128 34 Z" fill="#ffffff"/><rect x="104" y="128" width="48" height="66" rx="4" fill="#1a5c3a"/><path d="M104 132 L128 116 L152 132 Z" fill="#1a5c3a"/><path d="M128 140 V182 M107 161 H149" stroke="#ffffff" stroke-width="8" stroke-linecap="round"/><circle cx="186" cy="70" r="26" fill="#e8f2ec"/><circle cx="186" cy="70" r="12" fill="none" stroke="#1a5c3a" stroke-width="7"/></svg></span>
+    StakePhotoDrop
+    <span class="app-sub">境界杭写真台帳</span>
+  </h1>
+  <div class="header-actions">
+    <button class="btn btn-primary" onclick="saveToFolder()" title="NASの案件フォルダ等に一括保存">📁 フォルダに保存</button>
+    <button class="btn" onclick="exportJSON()" title="データ保存">💾 保存</button>
+    <button class="btn" onclick="document.getElementById('importInput').click()" title="データ読込">📂 読込</button>
+    <input type="file" id="importInput" accept=".json" style="display:none" onchange="importJSON(event)">
+  </div>
+</header>
+
+<!-- BODY -->
+<div class="app-body">
+
+  <!-- TABS -->
+  <div class="tabs">
+    <button class="tab active" data-tab="edit" onclick="switchTab('edit')">✏️ 編集</button>
+    <button class="tab" data-tab="preview" onclick="switchTab('preview')">🖨️ プレビュー・印刷</button>
+  </div>
+
+  <!-- === EDIT TAB === -->
+  <div id="tab-edit" class="tab-content active">
+
+    <!-- 現場情報 -->
+    <div class="card">
+      <div class="card-title">📋 現場情報</div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label">所在地</label>
+          <input class="form-input" id="field-location" placeholder="例：京都市○○区○○町">
+        </div>
+        <div class="form-group">
+          <label class="form-label">地番</label>
+          <input class="form-input" id="field-chiban" placeholder="例：123番1">
+        </div>
+        <div class="form-group">
+          <label class="form-label">調査日</label>
+          <input class="form-input" type="date" id="field-date">
+        </div>
+        <div class="form-group">
+          <label class="form-label">調査者</label>
+          <input class="form-input" id="field-surveyor" placeholder="例：○○測量事務所">
+        </div>
+        <div class="form-group">
+          <label class="form-label">業務名</label>
+          <input class="form-input" id="field-project" placeholder="例：境界確認測量">
+        </div>
+        <div class="form-group">
+          <label class="form-label">発注者</label>
+          <input class="form-input" id="field-client" placeholder="例：○○様">
+        </div>
+        <div class="form-group">
+          <label class="form-label">平面直角座標系（JGD2011）</label>
+          <select class="form-select" id="field-zone" onchange="renderStakes()"></select>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- コンパス -->
+    <div class="card">
+      <div class="card-title">🧭 方位（この端末の向き）</div>
+      <div class="compass-card">
+        <div class="compass-dial">
+          <svg viewBox="-50 -50 100 100">
+            <g id="compassRose">
+              <circle r="46" fill="#fff" stroke="#d4d0ca" stroke-width="2"/>
+              <path d="M0,-22 L6,0 L-6,0 Z" fill="#c33"/><path d="M0,22 L6,0 L-6,0 Z" fill="#aaa"/>
+              <text y="-30" font-size="12" text-anchor="middle" font-weight="700" fill="#c33" dominant-baseline="middle">北</text>
+              <text x="34" font-size="10" text-anchor="middle" fill="#666" dominant-baseline="middle">東</text>
+              <text y="32" font-size="10" text-anchor="middle" fill="#666" dominant-baseline="middle">南</text>
+              <text x="-34" font-size="10" text-anchor="middle" fill="#666" dominant-baseline="middle">西</text>
+            </g>
+            <path d="M0,-50 L5,-43 L-5,-43 Z" fill="#1a5c3a"/>
+          </svg>
+        </div>
+        <div style="flex:1;min-width:200px">
+          <div class="compass-deg" id="compassDeg">―</div>
+          <div class="compass-status" id="compassStatus">iPhoneでは「方位を表示」を押すと使用許可を求められます</div>
+        </div>
+        <button class="btn btn-primary" onclick="startCompass()">🧭 方位を表示</button>
+      </div>
+    </div>
+
+    <!-- 注意書き -->
+    <div class="card help-box">
+      <details>
+        <summary>📌 iPhone写真の位置情報・方位を残すための注意</summary>
+        <ul>
+          <li>写真の位置・方位は、写真に埋め込まれた情報（EXIF）をこの端末内で読み取ります。外部には一切送信しません。</li>
+          <li>iPhoneの「設定 → プライバシーとセキュリティ → 位置情報サービス」をオンにし、「カメラ」を「使用中のみ許可」・「正確な位置情報」オンにしてください。オフだと位置・方位が記録されません。</li>
+          <li><b>LINE・メール添付・SNS経由の写真は位置情報が削除</b>されることがあります。共有シートの「オプション」で「位置情報」がオフの場合も削除されます。</li>
+          <li>PCへはUSBケーブル、iCloud写真（オリジナルをダウンロード）、AirDrop（Mac）などで取り込むと情報が残ります。</li>
+          <li>HEIC形式はPCのブラウザで読み込めないことがあります。iPhoneの「設定 → カメラ → フォーマット」を「互換性優先」（JPEG）にするか、「設定 → 写真 → MacまたはPCに転送」を「自動」にしてください。</li>
+          <li>iPhoneのSafariで写真ライブラリから選ぶと、位置情報が削られる場合があります（iOSのバージョンにより異なります）。読み取れない時は、写真を「ファイル」アプリに保存してから選んでください。</li>
+          <li>位置・方位が無い写真は、写真をクリックして方位を手入力できます。また、iPhoneで「方位を表示」中にその場で撮った写真は、方位が無ければコンパスの値を記録します（磁北基準の目安）。</li>
+          <li>GPSの位置は数m、方位は数度〜十数度の誤差があります。座標はmm単位（小数点以下3桁）で表示しますが撮影位置の目安です。境界点の座標は測量成果を入力してください。</li>
+          <li>写真の撮影方位は真北基準です。撮影方向図では平面直角座標の座標北に補正（子午線収差）して描いています。</li>
+        </ul>
+      </details>
+    </div>
+
+    <!-- 境界点リスト -->
+    <div class="card">
+      <div class="card-title">
+        📍 境界点一覧
+        <span class="badge" id="stake-count">0 点</span>
+      </div>
+      <div class="stake-list" id="stakeList"></div>
+      <button class="add-stake-btn" onclick="addStake()">
+        ＋ 境界点を追加
+      </button>
+    </div>
+  </div>
+
+  <!-- === PREVIEW TAB === -->
+  <div id="tab-preview" class="tab-content">
+    <div class="preview-controls no-print">
+      <label class="form-label" style="margin-right:4px">用紙サイズ：</label>
+      <select class="form-select" id="pageSize" onchange="renderPreview()" style="width:auto">
+        <option value="a4">A4</option>
+        <option value="a3">A3</option>
+      </select>
+      <label class="form-label" style="margin-right:4px;margin-left:12px">1ページあたり：</label>
+      <select class="form-select" id="photosPerPage" onchange="renderPreview()" style="width:auto">
+        <option value="2">写真 2枚</option>
+        <option value="4">写真 4枚</option>
+        <option value="6">写真 6枚</option>
+        <option value="8">写真 8枚</option>
+      </select>
+      <label class="chk"><input type="checkbox" id="optShotInfo" checked onchange="renderPreview()">撮影情報</label>
+      <label class="chk"><input type="checkbox" id="optNorth" checked onchange="renderPreview()">写真に方位記号</label>
+      <label class="chk"><input type="checkbox" id="optBoard" checked onchange="renderPreview()">黒板</label>
+      <label class="chk"><input type="checkbox" id="optDirMap" checked onchange="renderPreview()">撮影方向図</label>
+      <button class="btn btn-primary" onclick="printPages()">🖨️ 印刷</button>
+      <button class="btn" onclick="exportPDF()">📄 PDF出力</button>
+      <button class="btn" onclick="exportPhotoCSV()">📑 撮影位置CSV</button>
+    </div>
+    <div class="preview-container" id="previewContainer"></div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- IMAGE PREVIEW MODAL -->
+<div class="modal-overlay" id="imageModal">
+  <div class="modal" style="max-width:800px">
+    <div class="modal-title">
+      写真プレビュー
+      <button class="btn btn-sm" onclick="closeImageModal()">✕ 閉じる</button>
+    </div>
+    <div style="text-align:center">
+      <img id="modalImage" style="max-width:100%;max-height:45vh;border-radius:var(--radius)">
+    </div>
+    <div style="display:flex;gap:8px;justify-content:center;margin-top:12px">
+      <button class="btn btn-sm" onclick="rotateModalImage(-90)">↺ 左回転</button>
+      <button class="btn btn-sm" onclick="rotateModalImage(90)">↻ 右回転</button>
+    </div>
+    <div class="meta-form">
+      <div class="form-group">
+        <label class="form-label">撮影方位（度・真北から時計回り）</label>
+        <input class="form-input" type="number" step="0.1" min="0" max="360" id="meta-dir" onchange="updateMetaField('dir',this.value)">
+      </div>
+      <div class="form-group">
+        <label class="form-label">黒板</label>
+        <label class="chk" style="font-size:14px;padding-top:8px"><input type="checkbox" id="meta-board" onchange="updateMetaField('board',this.checked)"> この写真に黒板を表示</label>
+      </div>
+      <div class="form-group">
+        <label class="form-label">緯度（度・10進）</label>
+        <input class="form-input" type="number" step="0.00000001" id="meta-lat" onchange="updateMetaField('lat',this.value)">
+      </div>
+      <div class="form-group">
+        <label class="form-label">経度（度・10進）</label>
+        <input class="form-input" type="number" step="0.00000001" id="meta-lon" onchange="updateMetaField('lon',this.value)">
+      </div>
+      <div class="form-group full">
+        <label class="form-label">写真の備考</label>
+        <input class="form-input" id="meta-note" placeholder="例：南側から撮影、ブロック塀角" onchange="updateMetaField('note',this.value)">
+      </div>
+      <div class="meta-readonly full" id="meta-info"></div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// ===== 日付ユーティリティ =====
+// toISOString() はUTC基準のため、日本時間の朝9時前は前日になる。ローカル日付で作る。
+function localISODate(d = new Date()) {
+  const p = n => String(n).padStart(2, '0');
+  return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}`;
+}
+// "2026-11-22" → "令和8年11月22日"
+function toWareki(iso) {
+  if (!iso) return '';
+  const [y, m, d] = iso.split('-').map(Number);
+  if (!y || !m || !d) return iso;
+  try {
+    return new Intl.DateTimeFormat('ja-JP-u-ca-japanese', { era: 'long', year: 'numeric', month: 'long', day: 'numeric' })
+      .format(new Date(y, m - 1, d));
+  } catch (e) { return iso; }
+}
+// ファイル名：物件名_書類種別_日付（和暦）
+function buildFileName(ext, kind = '境界杭写真台帳') {
+  const loc = (document.getElementById('field-location').value || '現場').replace(/[\\/:*?"<>|]/g, '_');
+  const date = toWareki(document.getElementById('field-date').value || localISODate()) || localISODate();
+  return `${loc}_${kind}_${date}.${ext}`;
+}
+
+// ===== EXIF読み取り（自前実装・CDN不使用・外部送信なし） =====
+// JPEGのAPP1(Exif)からIFD0・Exif IFD・GPS IFDを読む
+function parseExif(buf) {
+  const v = new DataView(buf);
+  if (v.byteLength < 4 || v.getUint16(0) !== 0xFFD8) return null; // JPEG以外は対象外
+  let off = 2;
+  while (off + 4 <= v.byteLength) {
+    if (v.getUint8(off) !== 0xFF) return null;
+    const marker = v.getUint8(off + 1);
+    if (marker === 0xFF) { off++; continue; }
+    if (marker === 0xDA || marker === 0xD9) break;
+    const len = v.getUint16(off + 2);
+    if (marker === 0xE1 && off + 10 <= v.byteLength &&
+        v.getUint32(off + 4) === 0x45786966 && v.getUint16(off + 8) === 0) {
+      return parseTiff(v, off + 10);
+    }
+    off += 2 + len;
+  }
+  return null;
+}
+function parseTiff(v, base) {
+  if (base + 8 > v.byteLength) return null;
+  const le = v.getUint16(base) === 0x4949;
+  const u16 = o => v.getUint16(base + o, le), u32 = o => v.getUint32(base + o, le), s32 = o => v.getInt32(base + o, le);
+  if (u16(2) !== 42) return null;
+  const SZ = { 1: 1, 2: 1, 3: 2, 4: 4, 5: 8, 6: 1, 7: 1, 8: 2, 9: 4, 10: 8 };
+  function readIFD(o) {
+    const tags = {};
+    if (!o || base + o + 2 > v.byteLength) return tags;
+    const n = u16(o);
+    for (let i = 0; i < n; i++) {
+      const e = o + 2 + i * 12;
+      if (base + e + 12 > v.byteLength) break;
+      const tag = u16(e), type = u16(e + 2), cnt = u32(e + 4);
+      const unit = SZ[type] || 1, size = unit * cnt;
+      const vo = size <= 4 ? e + 8 : u32(e + 8);
+      if (base + vo + size > v.byteLength) continue;
+      if (type === 2) {
+        let s = '';
+        for (let k = 0; k < cnt; k++) { const c = v.getUint8(base + vo + k); if (!c) break; s += String.fromCharCode(c); }
+        tags[tag] = s.trim(); continue;
+      }
+      const vals = [];
+      for (let k = 0; k < Math.min(cnt, 64); k++) {
+        const p = vo + k * unit;
+        if (type === 3) vals.push(u16(p));
+        else if (type === 4) vals.push(u32(p));
+        else if (type === 9) vals.push(s32(p));
+        else if (type === 5) { const d = u32(p + 4); vals.push(d ? u32(p) / d : NaN); }
+        else if (type === 10) { const d = s32(p + 4); vals.push(d ? s32(p) / d : NaN); }
+        else vals.push(v.getUint8(base + p));
+      }
+      tags[tag] = vals.length === 1 ? vals[0] : vals;
+    }
+    return tags;
+  }
+  const ifd0 = readIFD(u32(4));
+  const exif = ifd0[0x8769] ? readIFD(ifd0[0x8769]) : {};
+  const gps = ifd0[0x8825] ? readIFD(ifd0[0x8825]) : {};
+  return { ifd0, exif, gps };
+}
+// EXIFタグ → 写真の撮影情報
+function extractPhotoMeta(t) {
+  const m = {};
+  if (!t) return m;
+  const g = t.gps;
+  const dms = a => Array.isArray(a) && a.length >= 3 ? a[0] + a[1] / 60 + a[2] / 3600 : (typeof a === 'number' ? a : NaN);
+  if (g[2] !== undefined && g[4] !== undefined) {
+    let lat = dms(g[2]), lon = dms(g[4]);
+    if (g[1] === 'S') lat = -lat;
+    if (g[3] === 'W') lon = -lon;
+    if (isFinite(lat) && isFinite(lon) && !(lat === 0 && lon === 0)) { m.lat = lat; m.lon = lon; }
+  }
+  if (typeof g[6] === 'number' && isFinite(g[6])) m.alt = g[5] === 1 ? -g[6] : g[6];
+  if (typeof g[17] === 'number' && isFinite(g[17])) {           // GPSImgDirection
+    m.dir = Math.round((((g[17] % 360) + 360) % 360) * 100) / 100;
+    m.dirRef = g[16] === 'M' ? 'M' : 'T';                        // T=真北 M=磁北
+    m.dirSource = 'exif';
+  }
+  if (typeof g[31] === 'number' && isFinite(g[31])) m.hErr = g[31]; // GPSHPositioningError(m)
+  const dt = t.exif[0x9003] || t.ifd0[0x0132];
+  if (dt) m.dateTime = dt;                                       // "YYYY:MM:DD HH:MM:SS"
+  const mk = t.ifd0[0x010F], md = t.ifd0[0x0110];
+  if (md) m.model = (mk && !md.startsWith(mk) ? mk + ' ' : '') + md;
+  return m;
+}
+
+// ===== 平面直角座標系（JGD2011）への換算 =====
+// 国土地理院の換算式（河瀬 2011, Krüger級数 n^5まで）。GRS80楕円体。
+const JGD_ZONES = [null,
+  [33, 129.5, '長崎・鹿児島の一部'], [33, 131, '福岡・佐賀・熊本・大分・宮崎・鹿児島'], [36, 132 + 10 / 60, '山口・島根・広島'],
+  [33, 133.5, '香川・愛媛・徳島・高知'], [36, 134 + 20 / 60, '兵庫・鳥取・岡山'], [36, 136, '京都・大阪・福井・滋賀・三重・奈良・和歌山'],
+  [36, 137 + 10 / 60, '石川・富山・岐阜・愛知'], [36, 138.5, '新潟・長野・山梨・静岡'], [36, 139 + 50 / 60, '東京・福島・栃木・茨城・埼玉・千葉・群馬・神奈川'],
+  [40, 140 + 50 / 60, '青森・秋田・山形・岩手・宮城'], [44, 140.25, '北海道（西部）'], [44, 142.25, '北海道（中部）'],
+  [44, 144.25, '北海道（東部）'], [26, 142, '東京都（小笠原）'], [26, 127.5, '沖縄（本島）'],
+  [26, 124, '沖縄（先島）'], [26, 131, '沖縄（大東）'], [20, 136, '東京都（沖ノ鳥島）'], [26, 154, '東京都（南鳥島）']];
+const ROMAN = ['', 'I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII', 'XIII', 'XIV', 'XV', 'XVI', 'XVII', 'XVIII', 'XIX'];
+function llToXY(lat, lon, zone) {
+  const z = JGD_ZONES[zone]; if (!z) return null;
+  const a = 6378137, F = 298.257222101, m0 = 0.9999, n = 1 / (2 * F - 1);
+  const rad = Math.PI / 180, phi = lat * rad, lam = lon * rad, phi0 = z[0] * rad, lam0 = z[1] * rad;
+  const n2 = n * n, n3 = n2 * n, n4 = n3 * n, n5 = n4 * n;
+  const A = [1 + n2 / 4 + n4 / 64, -1.5 * (n - n3 / 8 - n5 / 64), 15 / 16 * (n2 - n4 / 4),
+             -35 / 48 * (n3 - 5 / 16 * n5), 315 / 512 * n4, -693 / 1280 * n5];
+  const al = [0, n / 2 - 2 / 3 * n2 + 5 / 16 * n3 + 41 / 180 * n4 - 127 / 288 * n5,
+              13 / 48 * n2 - 3 / 5 * n3 + 557 / 1440 * n4 + 281 / 630 * n5,
+              61 / 240 * n3 - 103 / 140 * n4 + 15061 / 26880 * n5,
+              49561 / 161280 * n4 - 179 / 168 * n5, 34729 / 80640 * n5];
+  const k = m0 * a / (1 + n), Abar = k * A[0];
+  let S0 = A[0] * phi0; for (let j = 1; j <= 5; j++) S0 += A[j] * Math.sin(2 * j * phi0); S0 *= k;
+  const c = 2 * Math.sqrt(n) / (1 + n);
+  const t = Math.sinh(Math.atanh(Math.sin(phi)) - c * Math.atanh(c * Math.sin(phi)));
+  const tb = Math.sqrt(1 + t * t), lc = Math.cos(lam - lam0), ls = Math.sin(lam - lam0);
+  const xi = Math.atan2(t, lc), eta = Math.atanh(ls / tb);
+  let x = xi, y = eta;
+  for (let j = 1; j <= 5; j++) {
+    x += al[j] * Math.sin(2 * j * xi) * Math.cosh(2 * j * eta);
+    y += al[j] * Math.cos(2 * j * xi) * Math.sinh(2 * j * eta);
+  }
+  return { x: Abar * x - S0, y: Abar * y };
+}
+// 真北基準の方位角 → 座標北（平面直角座標のX軸）基準の方向角（子午線収差を数値的に補正）
+function trueToGridBearing(lat, lon, az, zone) {
+  const a = 6378137, f = 1 / 298.257222101, e2 = f * (2 - f), d = 10;
+  const phi = lat * Math.PI / 180, s = Math.sin(phi), W = Math.sqrt(1 - e2 * s * s);
+  const M = a * (1 - e2) / (W * W * W), N = a / W, r = az * Math.PI / 180;
+  const p1 = llToXY(lat, lon, zone);
+  const p2 = llToXY(lat + d * Math.cos(r) / M * 180 / Math.PI, lon + d * Math.sin(r) / (N * Math.cos(phi)) * 180 / Math.PI, zone);
+  if (!p1 || !p2) return az;
+  return (Math.atan2(p2.y - p1.y, p2.x - p1.x) * 180 / Math.PI + 360) % 360;
+}
+const DIR16 = ['北', '北北東', '北東', '東北東', '東', '東南東', '南東', '南南東', '南', '南南西', '南西', '西南西', '西', '西北西', '北西', '北北西'];
+function dirName(deg) { return DIR16[Math.round((((deg % 360) + 360) % 360) / 22.5) % 16]; }
+
+// ===== 撮影情報の表示用 =====
+function exifDateToWareki(dt) {
+  const m = /^(\d{4}):(\d{2}):(\d{2})[ T](\d{2}):(\d{2})/.exec(dt || '');
+  if (!m) return dt || '';
+  return `${toWareki(`${m[1]}-${m[2]}-${m[3]}`)} ${m[4]}:${m[5]}`;
+}
+function currentZone() { return parseInt(document.getElementById('field-zone').value) || 6; }
+function photoXY(p) {
+  const m = p && p.meta;
+  if (!m || !isFinite(m.lat) || !isFinite(m.lon)) return null;
+  return llToXY(m.lat, m.lon, currentZone());
+}
+function fmtDir(m) {
+  if (!m || !isFinite(m.dir)) return '';
+  const ref = m.dirRef === 'M' ? '磁北' : '真北';
+  const src = m.dirSource === 'manual' ? '・手入力' : m.dirSource === 'compass' ? '・アプリのコンパス' : '';
+  return `${dirName(m.dir)}（${m.dir.toFixed(1)}°／${ref}基準${src}）`;
+}
+// 写真に付ける方位記号（カメラの向きに対して北がどちらか）
+function northMarkSVG(dir, size) {
+  return `<svg class="north-mark" width="${size}" height="${size}" viewBox="-20 -20 40 40">
+    <circle r="18" fill="rgba(255,255,255,0.85)" stroke="#222" stroke-width="1.2"/>
+    <g transform="rotate(${(-dir).toFixed(1)})">
+      <path d="M0,-15 L5,4 L0,0 L-5,4 Z" fill="#222"/>
+      <path d="M0,15 L5,4 L0,0 L-5,4 Z" fill="none" stroke="#222" stroke-width="1"/>
+    </g>
+    <text x="${(Math.sin(-dir * Math.PI / 180) * 11).toFixed(1)}" y="${(-Math.cos(-dir * Math.PI / 180) * 11 + 3).toFixed(1)}"
+      font-size="8" font-weight="700" text-anchor="middle" fill="#c00" font-family="sans-serif">N</text>
+  </svg>`;
+}
+
+// ===== コンパス（アプリ起動中の端末の向き） =====
+const compass = { heading: null, ref: '', at: 0, started: false };
+function compassSupported() { return 'DeviceOrientationEvent' in window; }
+function onOrientation(e) {
+  let h = null, ref = '';
+  if (typeof e.webkitCompassHeading === 'number' && e.webkitCompassHeading >= 0) {
+    h = e.webkitCompassHeading; ref = 'M';             // iPhone（Safari）
+  } else if (e.absolute && typeof e.alpha === 'number') {
+    h = (360 - e.alpha) % 360; ref = 'M';              // Android（端末を水平に持った時の値）
+  }
+  if (h === null) return;
+  compass.heading = h; compass.ref = ref; compass.at = Date.now();
+  renderCompass();
+}
+async function startCompass() {
+  const st = document.getElementById('compassStatus');
+  if (!compassSupported()) { st.textContent = 'この端末・ブラウザはコンパスに対応していません（PCでは表示されません）'; return; }
+  if (!window.isSecureContext) {
+    st.textContent = 'HTTPSで開いていないため、iPhoneではコンパスを使えません（説明を参照）';
+  }
+  try {
+    if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+      const r = await DeviceOrientationEvent.requestPermission();   // iPhoneはボタン操作時のみ許可を求められる
+      if (r !== 'granted') { st.textContent = 'コンパスの使用が許可されませんでした。ブラウザを開き直して、もう一度「方位を表示」を押してください'; return; }
+    }
+  } catch (err) {
+    st.textContent = 'コンパスの許可を求められませんでした（HTTPSで開く必要があります）'; return;
+  }
+  if (!compass.started) {
+    window.addEventListener('deviceorientationabsolute', onOrientation, true);
+    window.addEventListener('deviceorientation', onOrientation, true);
+    compass.started = true;
+  }
+  st.textContent = '方位を取得中…（端末を水平に持ってください）';
+  setTimeout(() => { if (compass.heading === null) st.textContent = 'コンパスの値が届きません。この端末にはコンパスがない可能性があります'; }, 3000);
+}
+function renderCompass() {
+  if (compass.heading === null) return;
+  const h = compass.heading;
+  document.getElementById('compassRose').style.transform = `rotate(${-h}deg)`;
+  document.getElementById('compassDeg').textContent = `${dirName(h)} ${h.toFixed(0)}°`;
+  document.getElementById('compassStatus').textContent = '端末上端の向き（磁北基準・目安）。撮影した写真に方位が無い場合、この値を記録します';
+}
+// 撮影直後（60秒以内）の写真で方位が取れなかった場合、コンパス値で補う
+function compassFallback(file) {
+  if (compass.heading === null || Date.now() - compass.at > 5000) return null;
+  if (Date.now() - (file.lastModified || 0) > 60000) return null;
+  return { dir: compass.heading, dirRef: compass.ref || 'M', dirSource: 'compass' };
+}
+
+// ===== 撮影方向図（SVG・背景地図なし） =====
+function niceStep(v) {
+  const p = Math.pow(10, Math.floor(Math.log10(v))), r = v / p;
+  return (r < 1.5 ? 1 : r < 3.5 ? 2 : r < 7.5 ? 5 : 10) * p;
+}
+function buildDirectionMap(photoList, Wmm, Hmm) {
+  const zone = currentZone();
+  const pts = [];
+  photoList.forEach(e => { const xy = photoXY(e.photo); if (xy) pts.push(xy); });
+  const stakePts = [];
+  stakes.forEach(s => { const x = parseFloat(s.x), y = parseFloat(s.y); if (isFinite(x) && isFinite(y)) { stakePts.push({ s, x, y }); pts.push({ x, y }); } });
+  if (pts.length === 0) return null;
+  let minX = Math.min(...pts.map(p => p.x)), maxX = Math.max(...pts.map(p => p.x));
+  let minY = Math.min(...pts.map(p => p.y)), maxY = Math.max(...pts.map(p => p.y));
+  const pad = 14; // mm（矢印・ラベル分の余白）
+  const spanX = Math.max(maxX - minX, 5), spanY = Math.max(maxY - minY, 5);
+  const need = Math.max(spanY / ((Wmm - pad * 2) / 1000), spanX / ((Hmm - pad * 2) / 1000));
+  const DEN = [50, 100, 200, 250, 300, 500, 600, 1000, 1500, 2000, 2500, 5000, 10000, 25000, 50000];
+  const den = DEN.find(d => d >= need) || Math.ceil(need / 10000) * 10000;
+  const s = 1000 / den; // mm / m
+  const cx = (minY + maxY) / 2, cy = (minX + maxX) / 2;
+  const px = Y => Wmm / 2 + (Y - cx) * s, py = X => Hmm / 2 - (X - cy) * s;
+  let svg = `<svg class="dirmap-svg" viewBox="0 0 ${Wmm} ${Hmm}" width="${Wmm}mm" height="${Hmm}mm" xmlns="http://www.w3.org/2000/svg" font-family="Noto Sans JP, sans-serif">`;
+  svg += `<rect x="0" y="0" width="${Wmm}" height="${Hmm}" fill="#fff" stroke="#333" stroke-width="0.3"/>`;
+  // 座標グリッド
+  const step = niceStep((Wmm / 4) / s);
+  const Y0 = cx - (Wmm / 2) / s, Y1 = cx + (Wmm / 2) / s, X0 = cy - (Hmm / 2) / s, X1 = cy + (Hmm / 2) / s;
+  for (let Y = Math.ceil(Y0 / step) * step; Y <= Y1; Y += step) {
+    const x = px(Y).toFixed(2);
+    svg += `<line x1="${x}" y1="0" x2="${x}" y2="${Hmm}" stroke="#ddd" stroke-width="0.2"/><text x="${x}" y="${Hmm - 1.5}" font-size="2.2" fill="#999" text-anchor="middle">Y=${Y.toFixed(0)}</text>`;
+  }
+  for (let X = Math.ceil(X0 / step) * step; X <= X1; X += step) {
+    const y = py(X).toFixed(2);
+    svg += `<line x1="0" y1="${y}" x2="${Wmm}" y2="${y}" stroke="#ddd" stroke-width="0.2"/><text x="1.5" y="${(py(X) - 0.8).toFixed(2)}" font-size="2.2" fill="#999">X=${X.toFixed(0)}</text>`;
+  }
+  // 写真→境界点の対応線
+  photoList.forEach(e => {
+    const xy = photoXY(e.photo); if (!xy) return;
+    const sx = parseFloat(e.stake.x), sy = parseFloat(e.stake.y);
+    if (isFinite(sx) && isFinite(sy)) svg += `<line x1="${px(xy.y).toFixed(2)}" y1="${py(xy.x).toFixed(2)}" x2="${px(sy).toFixed(2)}" y2="${py(sx).toFixed(2)}" stroke="#888" stroke-width="0.25" stroke-dasharray="1,1"/>`;
+  });
+  // 境界点
+  stakePts.forEach(({ s: st, x, y }) => {
+    const X = px(y), Y = py(x);
+    svg += `<circle cx="${X.toFixed(2)}" cy="${Y.toFixed(2)}" r="1.6" fill="#fff" stroke="#000" stroke-width="0.4"/><circle cx="${X.toFixed(2)}" cy="${Y.toFixed(2)}" r="0.5" fill="#000"/>`;
+    svg += `<text x="${(X + 2.2).toFixed(2)}" y="${(Y - 1.6).toFixed(2)}" font-size="3" font-weight="700" fill="#000">${st.pointNumber}</text>`;
+  });
+  // 撮影位置と撮影方向
+  photoList.forEach(e => {
+    const xy = photoXY(e.photo); if (!xy) return;
+    const m = e.photo.meta, X = px(xy.y), Y = py(xy.x);
+    if (isFinite(m.dir)) {
+      const g = trueToGridBearing(m.lat, m.lon, m.dir, zone) * Math.PI / 180, R = 11, w = 25 * Math.PI / 180;
+      const fx = a => (X + Math.sin(a) * R).toFixed(2), fy = a => (Y - Math.cos(a) * R).toFixed(2);
+      svg += `<path d="M${X.toFixed(2)},${Y.toFixed(2)} L${fx(g - w)},${fy(g - w)} A${R},${R} 0 0 1 ${fx(g + w)},${fy(g + w)} Z" fill="rgba(200,30,30,0.13)" stroke="none"/>`;
+      const L = 9, ex = X + Math.sin(g) * L, ey = Y - Math.cos(g) * L;
+      svg += `<line x1="${X.toFixed(2)}" y1="${Y.toFixed(2)}" x2="${ex.toFixed(2)}" y2="${ey.toFixed(2)}" stroke="#c00" stroke-width="0.5"/>`;
+      const h1 = g + Math.PI * 0.85, h2 = g - Math.PI * 0.85;
+      svg += `<path d="M${ex.toFixed(2)},${ey.toFixed(2)} L${(ex + Math.sin(h1) * 2.2).toFixed(2)},${(ey - Math.cos(h1) * 2.2).toFixed(2)} L${(ex + Math.sin(h2) * 2.2).toFixed(2)},${(ey - Math.cos(h2) * 2.2).toFixed(2)} Z" fill="#c00"/>`;
+      const lx = X - Math.sin(g) * 4, ly = Y + Math.cos(g) * 4;
+      svg += `<circle cx="${lx.toFixed(2)}" cy="${ly.toFixed(2)}" r="2.1" fill="#fff" stroke="#c00" stroke-width="0.35"/><text x="${lx.toFixed(2)}" y="${(ly + 1).toFixed(2)}" font-size="2.6" font-weight="700" text-anchor="middle" fill="#c00">${e.no}</text>`;
+    } else {
+      svg += `<circle cx="${(X + 3.5).toFixed(2)}" cy="${(Y - 3.5).toFixed(2)}" r="2.1" fill="#fff" stroke="#c00" stroke-width="0.35"/><text x="${(X + 3.5).toFixed(2)}" y="${(Y - 2.5).toFixed(2)}" font-size="2.6" font-weight="700" text-anchor="middle" fill="#c00">${e.no}</text>`;
+    }
+    svg += `<circle cx="${X.toFixed(2)}" cy="${Y.toFixed(2)}" r="0.9" fill="#c00"/>`;
+  });
+  // 方位記号（座標北）
+  const nx = Wmm - 12, ny = 14;
+  svg += `<g transform="translate(${nx},${ny})"><circle r="7" fill="#fff" stroke="#000" stroke-width="0.3"/><path d="M0,-6 L2.2,3 L0,1.5 L-2.2,3 Z" fill="#000"/><text y="-7.8" font-size="3.2" font-weight="700" text-anchor="middle">N</text><text y="11" font-size="2" text-anchor="middle" fill="#555">座標北</text></g>`;
+  // スケールバー
+  const barM = niceStep((Wmm / 5) / s), barMM = barM * s, bx = 6, by = Hmm - 10;
+  svg += `<g><rect x="${bx - 2}" y="${by - 5}" width="${(barMM + 42).toFixed(2)}" height="8.5" fill="#fff" opacity="0.9"/><rect x="${bx}" y="${by}" width="${(barMM / 2).toFixed(2)}" height="1.2" fill="#000"/><rect x="${(bx + barMM / 2).toFixed(2)}" y="${by}" width="${(barMM / 2).toFixed(2)}" height="1.2" fill="#fff" stroke="#000" stroke-width="0.25"/>`;
+  svg += `<text x="${bx}" y="${by - 1.2}" font-size="2.4">0</text><text x="${(bx + barMM).toFixed(2)}" y="${by - 1.2}" font-size="2.4" text-anchor="middle">${barM}m</text><text x="${(bx + barMM + 4).toFixed(2)}" y="${by + 1.3}" font-size="2.6">縮尺 1/${den}（${ROMAN[zone]}系）</text></g>`;
+  svg += `</svg>`;
+  return { svg, den };
+}
+
+// ===== 撮影位置CSV（UTF-8 BOM付き） =====
+function exportPhotoCSV() {
+  const csv = buildPhotoCSV();
+  if (!csv) { showToast('写真がありません'); return; }
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' }));
+  a.download = buildFileName('csv', '撮影位置一覧');
+  a.click();
+  showToast('撮影位置CSVを保存しました');
+}
+function buildPhotoCSV() {
+  const zone = currentZone();
+  const rows = [['写真番号', '境界点', '撮影日時', '緯度', '経度', '座標系', 'X座標(m)', 'Y座標(m)', '撮影方位(度)', '方位基準', '座標北基準の方向角(度)', '方位の取得元', '標高(m)', '位置の誤差目安(m)', '機種']];
+  let no = 0;
+  stakes.forEach(s => s.photos.forEach(p => {
+    no++;
+    const m = p.meta || {}, xy = photoXY(p);
+    const hasLL = isFinite(m.lat) && isFinite(m.lon), hasDir = isFinite(m.dir);
+    rows.push([no, s.pointNumber, exifDateToWareki(m.dateTime),
+      hasLL ? m.lat.toFixed(8) : '', hasLL ? m.lon.toFixed(8) : '', `第${ROMAN[zone]}系`,
+      xy ? xy.x.toFixed(3) : '', xy ? xy.y.toFixed(3) : '',
+      hasDir ? m.dir.toFixed(1) : '', hasDir ? (m.dirRef === 'M' ? '磁北' : '真北') : '',
+      hasDir && hasLL && m.dirRef !== 'M' ? trueToGridBearing(m.lat, m.lon, m.dir, zone).toFixed(1) : '',
+      { exif: '写真のEXIF', manual: '手入力', compass: 'アプリのコンパス' }[m.dirSource] || '',
+      isFinite(m.alt) ? m.alt.toFixed(1) : '', isFinite(m.hErr) ? m.hErr.toFixed(1) : '', m.model || '']);
+  }));
+  return no === 0 ? null : '\uFEFF' + rows.map(r => r.map(v => { const t = String(v ?? ''); return /[",\n]/.test(t) ? `"${t.replace(/"/g, '""')}"` : t; }).join(',')).join('\r\n');
+}
+
+// ===== 黒板（写真上に重ねて表示） =====
+function blackboardHTML(s, p, small) {
+  const m = p.meta || {};
+  const date = m.dateTime ? exifDateToWareki(m.dateTime).split(' ')[0] : (toWareki(document.getElementById('field-date').value) || '');
+  const proj = document.getElementById('field-project').value || '';
+  return `<div class="blackboard${small ? ' small' : ''}">
+    ${proj ? `<div><b>業務名</b>${proj}</div>` : ''}
+    <div><b>境界点</b>${s.pointNumber}</div>
+    <div><b>杭　種</b>${s.stakeType}（${s.condition}）</div>
+    ${p.note ? `<div><b>備　考</b>${p.note}</div>` : ''}
+    <div><b>撮影日</b>${date}</div>
+  </div>`;
+}
+
+// ===== フォルダ（NAS）へ一括保存 =====
+// Chrome / Edge のフォルダ選択機能を使用。NASの案件フォルダ（例：Z:\…）を選ぶとそこへ直接書き込む。
+async function saveToFolder() {
+  if (!window.showDirectoryPicker) {
+    showToast('このブラウザはフォルダ保存に未対応です（Chrome / Edgeで開いてください）');
+    return;
+  }
+  let root;
+  try { root = await window.showDirectoryPicker({ id: 'stakephotodrop', mode: 'readwrite' }); }
+  catch (e) { return; } // キャンセル
+  try {
+    const name = buildFileName('', '境界杭写真台帳').replace(/\.$/, '');
+    const dir = await root.getDirectoryHandle(name, { create: true });
+    const write = async (d, fname, blob) => {
+      const fh = await d.getFileHandle(fname, { create: true });
+      const w = await fh.createWritable(); await w.write(blob); await w.close();
+    };
+    await write(dir, buildFileName('json'), new Blob([JSON.stringify(buildSaveData())], { type: 'application/json' }));
+    await write(dir, buildFileName('csv', '撮影位置一覧'), new Blob([buildPhotoCSV() || '\uFEFF'], { type: 'text/csv' }));
+    const pdir = await dir.getDirectoryHandle('写真', { create: true });
+    let no = 0;
+    for (const s of stakes) for (const p of s.photos) {
+      no++;
+      const blob = await (await fetch(p.dataUrl)).blob();
+      const safe = String(s.pointNumber).replace(/[\\/:*?"<>|]/g, '_');
+      await write(pdir, `写真${String(no).padStart(2, '0')}_${safe}.jpg`, blob);
+    }
+    showToast(`「${name}」に保存しました（写真${no}枚）`);
+  } catch (e) {
+    console.error(e);
+    showToast('保存に失敗しました。書き込み権限のあるフォルダか確認してください');
+  }
+}
+
+// ===== STATE =====
+let stakes = [];
+let stakeIdCounter = 0;
+let currentModalStakeId = null;
+let currentModalPhotoIdx = null;
+let currentRotation = 0;
+
+// ===== STAKE MANAGEMENT =====
+function addStake() {
+  const id = ++stakeIdCounter;
+  stakes.push({
+    id,
+    pointNumber: `T${id}`,
+    stakeType: 'コンクリート杭',
+    condition: '新設',
+    notes: '',
+    photos: [] // { dataUrl, rotation }
+  });
+  renderStakes();
+  updateStakeCount();
+}
+
+function removeStake(id) {
+  if (!confirm('この境界点を削除しますか？')) return;
+  stakes = stakes.filter(s => s.id !== id);
+  renderStakes();
+  updateStakeCount();
+}
+
+function updateStakeField(id, field, value) {
+  const stake = stakes.find(s => s.id === id);
+  if (stake) stake[field] = value;
+}
+
+function copyPhotoXY(id) {
+  const s = stakes.find(t => t.id === id);
+  const p = s && s.photos.find(ph => photoXY(ph));
+  if (!p) { showToast('位置情報のある写真がありません'); return; }
+  const xy = photoXY(p);
+  s.x = xy.x.toFixed(3); s.y = xy.y.toFixed(3);
+  renderStakes();
+  showToast('写真の撮影位置を入れました（GPSの誤差数mを含む目安です）');
+}
+
+function updateStakeCount() {
+  document.getElementById('stake-count').textContent = `${stakes.length} 点`;
+}
+
+// ===== PHOTO MANAGEMENT =====
+function handlePhotoDrop(e, stakeId) {
+  e.preventDefault();
+  e.currentTarget.classList.remove('dragover');
+  const files = e.dataTransfer ? e.dataTransfer.files : e.target.files;
+  if (!files) return;
+  processPhotoFiles(files, stakeId);
+}
+
+async function processPhotoFiles(files, stakeId) {
+  const stake = stakes.find(s => s.id === stakeId);
+  if (!stake) return;
+  let noGps = 0, noDir = 0, failed = 0, added = 0;
+  for (const file of Array.from(files)) {           // 選んだ順に1枚ずつ処理
+    const isHeic = /\.hei[cf]$/i.test(file.name) || /hei[cf]/i.test(file.type);
+    if (!file.type.startsWith('image/') && !isHeic) continue;
+    let meta = {};
+    try { meta = extractPhotoMeta(parseExif(await file.slice(0, 512 * 1024).arrayBuffer())); } catch (e) { meta = {}; }
+    if (!isFinite(meta.dir)) Object.assign(meta, compassFallback(file) || {});
+    const url = URL.createObjectURL(file);
+    const dataUrl = await new Promise(resolve => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const MAX = 1200;
+        let w = img.width, h = img.height;
+        if (w > MAX || h > MAX) {
+          if (w > h) { h = h * MAX / w; w = MAX; }
+          else { w = w * MAX / h; h = MAX; }
+        }
+        canvas.width = w;
+        canvas.height = h;
+        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+        resolve(canvas.toDataURL('image/jpeg', 0.85));
+      };
+      img.onerror = () => resolve(null);
+      img.src = url;
+    });
+    URL.revokeObjectURL(url);
+    if (!dataUrl) { failed++; continue; }
+    if (!isFinite(meta.lat)) noGps++;
+    if (!isFinite(meta.dir)) noDir++;
+    stake.photos.push({ dataUrl, rotation: 0, meta, note: '', board: true });
+    added++;
+    renderStakes();
+  }
+  const msg = [];
+  if (failed) msg.push(`${failed}枚を読み込めませんでした（HEICの場合はJPEGにしてください）`);
+  if (noGps) msg.push(`${noGps}枚に位置情報がありません`);
+  else if (noDir) msg.push(`${noDir}枚に方位がありません`);
+  if (msg.length) showToast(msg.join('。'));
+  else if (added) showToast(`${added}枚を追加しました（位置・方位あり）`);
+}
+
+function updateMetaField(field, value) {
+  const stake = stakes.find(s => s.id === currentModalStakeId);
+  const p = stake && stake.photos[currentModalPhotoIdx];
+  if (!p) return;
+  p.meta = p.meta || {};
+  if (field === 'note') p.note = value;
+  else if (field === 'board') p.board = value;
+  else if (field === 'dir') {
+    const v = parseFloat(value);
+    if (value === '' || !isFinite(v)) { delete p.meta.dir; delete p.meta.dirRef; delete p.meta.dirSource; }
+    else { p.meta.dir = ((v % 360) + 360) % 360; p.meta.dirRef = 'T'; p.meta.dirSource = 'manual'; }
+  } else {
+    const v = parseFloat(value);
+    if (value === '' || !isFinite(v)) delete p.meta[field]; else p.meta[field] = v;
+  }
+  fillMetaForm(p);
+  renderStakes();
+}
+function fillMetaForm(p) {
+  const m = p.meta || {};
+  document.getElementById('meta-dir').value = isFinite(m.dir) ? m.dir.toFixed(1) : '';
+  document.getElementById('meta-lat').value = isFinite(m.lat) ? m.lat.toFixed(8) : '';
+  document.getElementById('meta-lon').value = isFinite(m.lon) ? m.lon.toFixed(8) : '';
+  document.getElementById('meta-note').value = p.note || '';
+  document.getElementById('meta-board').checked = p.board !== false;
+  const xy = photoXY(p), z = currentZone();
+  const lines = [];
+  lines.push(`撮影日時：${m.dateTime ? exifDateToWareki(m.dateTime) : '記録なし'}`);
+  lines.push(`撮影方向：${fmtDir(m) || '記録なし（上の欄に手入力できます）'}`);
+  lines.push(`撮影位置：${xy ? `X=${xy.x.toFixed(3)}　Y=${xy.y.toFixed(3)}（第${ROMAN[z]}系）` : '記録なし'}`);
+  if (isFinite(m.hErr)) lines.push(`位置の誤差目安：約${m.hErr.toFixed(1)}m`);
+  if (isFinite(m.alt)) lines.push(`標高（GPS）：${m.alt.toFixed(1)}m`);
+  if (m.model) lines.push(`機種：${m.model}`);
+  document.getElementById('meta-info').innerHTML = lines.join('<br>');
+}
+
+function removePhoto(stakeId, photoIdx) {
+  const stake = stakes.find(s => s.id === stakeId);
+  if (stake) {
+    stake.photos.splice(photoIdx, 1);
+    renderStakes();
+  }
+}
+
+function rotatePhoto(stakeId, photoIdx, deg) {
+  const stake = stakes.find(s => s.id === stakeId);
+  if (stake && stake.photos[photoIdx]) {
+    stake.photos[photoIdx].rotation = (stake.photos[photoIdx].rotation + deg) % 360;
+    renderStakes();
+  }
+}
+
+function openImageModal(stakeId, photoIdx) {
+  currentModalStakeId = stakeId;
+  currentModalPhotoIdx = photoIdx;
+  const stake = stakes.find(s => s.id === stakeId);
+  const photo = stake.photos[photoIdx];
+  const img = document.getElementById('modalImage');
+  img.src = photo.dataUrl;
+  currentRotation = photo.rotation || 0;
+  img.style.transform = `rotate(${currentRotation}deg)`;
+  fillMetaForm(photo);
+  document.getElementById('imageModal').classList.add('active');
+}
+
+function closeImageModal() {
+  document.getElementById('imageModal').classList.remove('active');
+}
+
+function rotateModalImage(deg) {
+  currentRotation = (currentRotation + deg) % 360;
+  document.getElementById('modalImage').style.transform = `rotate(${currentRotation}deg)`;
+  // Save rotation
+  const stake = stakes.find(s => s.id === currentModalStakeId);
+  if (stake && stake.photos[currentModalPhotoIdx]) {
+    stake.photos[currentModalPhotoIdx].rotation = currentRotation;
+  }
+}
+
+// ===== RENDER STAKES =====
+function renderStakes() {
+  const list = document.getElementById('stakeList');
+  if (stakes.length === 0) {
+    list.innerHTML = `
+      <div class="empty-state">
+        <div class="icon">📍</div>
+        <p>境界点がありません。<br>「境界点を追加」ボタンから追加してください。</p>
+      </div>`;
+    return;
+  }
+
+  list.innerHTML = stakes.map((s, idx) => `
+    <div class="stake-item" draggable="true" data-id="${s.id}"
+         ondragstart="onDragStart(event)" ondragover="onDragOver(event)"
+         ondrop="onDrop(event)" ondragend="onDragEnd(event)">
+      <div class="stake-header">
+        <span class="drag-handle">⠿</span>
+        <span class="stake-number">${idx + 1}</span>
+        <span class="stake-summary">
+          ${s.pointNumber} ／ ${s.stakeType} ／ 写真 ${s.photos.length}枚
+        </span>
+        <button class="btn btn-sm btn-danger" onclick="removeStake(${s.id})">削除</button>
+      </div>
+      <div class="stake-body">
+        <div class="stake-info">
+          <div class="form-group">
+            <label class="form-label">境界点番号</label>
+            <input class="form-input" value="${s.pointNumber}"
+                   onchange="updateStakeField(${s.id},'pointNumber',this.value)">
+          </div>
+          <div class="form-group">
+            <label class="form-label">杭種</label>
+            <select class="form-select" onchange="updateStakeField(${s.id},'stakeType',this.value)">
+              ${['コンクリート杭','金属標','プラスチック杭','木杭','石杭','鋲','刻み','ペンキ','その他']
+                .map(t => `<option ${s.stakeType===t?'selected':''}>${t}</option>`).join('')}
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">設置状況</label>
+            <select class="form-select" onchange="updateStakeField(${s.id},'condition',this.value)">
+              ${['新設','復元','既設']
+                .map(t => `<option ${s.condition===t?'selected':''}>${t}</option>`).join('')}
+            </select>
+          </div>
+          <div class="coord-row">
+            <div class="form-group">
+              <label class="form-label">境界点 X座標（m）</label>
+              <input class="form-input" type="number" step="0.001" value="${s.x ?? ''}" placeholder="任意"
+                     onchange="updateStakeField(${s.id},'x',this.value===''?'':parseFloat(this.value).toFixed(3));this.value=stakes.find(t=>t.id===${s.id}).x">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Y座標（m）</label>
+              <input class="form-input" type="number" step="0.001" value="${s.y ?? ''}" placeholder="任意"
+                     onchange="updateStakeField(${s.id},'y',this.value===''?'':parseFloat(this.value).toFixed(3));this.value=stakes.find(t=>t.id===${s.id}).y">
+            </div>
+            <button class="btn btn-sm" onclick="copyPhotoXY(${s.id})" title="位置情報のある最初の写真の撮影位置を入れます（GPSのため目安）">📍写真の位置</button>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">備考</label>
+            <textarea class="form-textarea" placeholder="備考を入力"
+                      onchange="updateStakeField(${s.id},'notes',this.value)">${s.notes || ''}</textarea>
+          </div>
+        </div>
+        <div class="stake-photos">
+          <label class="form-label">写真</label>
+          <div class="photo-grid">
+            ${s.photos.map((p, pi) => `
+              <div class="photo-thumb" onclick="openImageModal(${s.id},${pi})">
+                <img src="${p.dataUrl}" style="transform:rotate(${p.rotation||0}deg)">
+                <div class="photo-meta-badge">${(() => { const m = p.meta || {};
+                  return (isFinite(m.dir) ? `<span>🧭${dirName(m.dir)} ${m.dir.toFixed(0)}°</span>` : '<span class="warn">方位なし</span>')
+                       + (isFinite(m.lat) ? '<span>📍位置</span>' : '<span class="warn">位置なし</span>')
+                       + (p.note ? '<span>📝</span>' : '') + (p.board === false ? '' : '<span>黒板</span>'); })()}</div>
+
+                <div class="photo-actions" onclick="event.stopPropagation()">
+                  <button class="photo-action-btn" onclick="rotatePhoto(${s.id},${pi},-90)" title="左回転">↺</button>
+                  <button class="photo-action-btn" onclick="removePhoto(${s.id},${pi})" title="削除">✕</button>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+          <div class="photo-drop-zone"
+               ondragover="event.preventDefault();this.classList.add('dragover')"
+               ondragleave="this.classList.remove('dragover')"
+               ondrop="handlePhotoDrop(event,${s.id})">
+            <div class="photo-drop-icon">📷</div>
+            <div>写真をドラッグ＆ドロップ<br>またはクリックして選択</div>
+            <input type="file" accept="image/*" multiple
+                   onchange="processPhotoFiles(this.files,${s.id});this.value=''">
+          </div>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ===== DRAG & DROP SORT =====
+let dragId = null;
+function onDragStart(e) {
+  dragId = parseInt(e.currentTarget.dataset.id);
+  e.currentTarget.classList.add('dragging');
+}
+function onDragOver(e) { e.preventDefault(); }
+function onDrop(e) {
+  e.preventDefault();
+  const targetId = parseInt(e.currentTarget.dataset.id);
+  if (dragId === targetId) return;
+  const fromIdx = stakes.findIndex(s => s.id === dragId);
+  const toIdx = stakes.findIndex(s => s.id === targetId);
+  const [moved] = stakes.splice(fromIdx, 1);
+  stakes.splice(toIdx, 0, moved);
+  renderStakes();
+}
+function onDragEnd(e) { e.currentTarget.classList.remove('dragging'); }
+
+// ===== TABS =====
+function switchTab(tab) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.tab === tab));
+  document.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
+  document.getElementById('tab-' + tab).classList.add('active');
+  if (tab === 'preview') renderPreview();
+}
+
+// ===== PREVIEW =====
+function renderPreview() {
+  const container = document.getElementById('previewContainer');
+  const perPage = parseInt(document.getElementById('photosPerPage').value);
+  const pageSize = document.getElementById('pageSize').value;
+  const sizeClass = `size-${pageSize}`;
+
+  // Collect all photo entries
+  const entries = [];
+  let photoNo = 0;
+  stakes.forEach((s, idx) => {
+    if (s.photos.length === 0) {
+      entries.push({ stake: s, idx, photo: null });
+    } else {
+      s.photos.forEach(p => {
+        entries.push({ stake: s, idx, photo: p, no: ++photoNo });
+      });
+    }
+  });
+  const optShot = document.getElementById('optShotInfo').checked;
+  const optNorth = document.getElementById('optNorth').checked;
+  const optBoard = document.getElementById('optBoard').checked;
+  const optMap = document.getElementById('optDirMap').checked;
+  const zone = currentZone();
+
+  if (entries.length === 0) {
+    container.innerHTML = '<div class="empty-state"><div class="icon">📄</div><p>表示するデータがありません</p></div>';
+    return;
+  }
+
+  const location = document.getElementById('field-location').value || '―';
+  const chiban = document.getElementById('field-chiban').value || '―';
+  const date = toWareki(document.getElementById('field-date').value) || '―';
+  const surveyor = document.getElementById('field-surveyor').value || '―';
+  const project = document.getElementById('field-project').value || '―';
+
+  // Adjust photo entry size based on photos per page and page size
+  const imgMaxHeight = (() => {
+    if (pageSize === 'a3') {
+      if (perPage <= 2) return 280;
+      if (perPage <= 4) return 140;
+      if (perPage <= 6) return 88;
+      return 64;
+    } else {
+      if (perPage <= 2) return 200;
+      if (perPage <= 4) return 95;
+      if (perPage <= 6) return 58;
+      return 40;
+    }
+  })();
+
+  const fontSize = perPage >= 6 ? '10px' : '11px';
+  const headerFontSize = perPage >= 6 ? '9px' : '11px';
+  const detailFontSize = perPage >= 6 ? '9px' : '11px';
+  const cellPadding = perPage >= 6 ? '2px 6px' : '4px 8px';
+  const detailPadding = perPage >= 6 ? '4px' : '8px';
+  const entryMargin = perPage >= 6 ? '4px' : '8px';
+
+  // Split into pages
+  const pages = [];
+  for (let i = 0; i < entries.length; i += perPage) {
+    pages.push(entries.slice(i, i + perPage));
+  }
+
+  // 撮影方向図ページ
+  let mapPage = '';
+  if (optMap) {
+    const photoList = entries.filter(e => e.photo);
+    const Wmm = pageSize === 'a3' ? 267 : 180, Hmm = pageSize === 'a3' ? 250 : 165;
+    const map = buildDirectionMap(photoList, Wmm, Hmm);
+    const rows = photoList.map(e => {
+      const m = e.photo.meta || {}, xy = photoXY(e.photo);
+      return `<tr><td>${e.no}</td><td>${e.stake.pointNumber}</td><td>${m.dateTime ? exifDateToWareki(m.dateTime) : '―'}</td>
+        <td>${isFinite(m.dir) ? `${dirName(m.dir)} ${m.dir.toFixed(1)}°` : '―'}</td>
+        <td>${xy ? xy.x.toFixed(3) : '―'}</td><td>${xy ? xy.y.toFixed(3) : '―'}</td><td>${e.photo.note || ''}</td></tr>`;
+    }).join('');
+    mapPage = `
+    <div class="print-page ${sizeClass}">
+      <div class="page-header">
+        <h2>撮 影 方 向 図</h2>
+        <div class="page-header-info">
+          <span>業務名：${project}</span>
+          <span>所在地：${location}　地番：${chiban}</span>
+          <span>調査日：${date}</span>
+        </div>
+      </div>
+      ${map ? `<div class="dirmap-wrap">${map.svg}</div>` : '<div class="empty-state"><p>位置情報のある写真、または座標を入力した境界点がないため、図を作成できません。</p></div>'}
+      <table class="dirmap-table">
+        <tr><th>写真</th><th>境界点</th><th>撮影日時</th><th>撮影方向</th><th>撮影位置 X（m）</th><th>Y（m）</th><th>備考</th></tr>
+        ${rows}
+      </table>
+      <div class="dirmap-note">
+        ● 撮影位置（赤丸の数字は写真番号）　→ 撮影方向（扇形は画角の目安）　◎ 境界点（座標を入力した点）　点線は写真と境界点の対応<br>
+        座標は世界測地系（JGD2011）平面直角座標系 第${ROMAN[zone]}系。撮影位置・方向はiPhoneのGPS・電子コンパスによる値で、数m・数度の誤差を含みます。背景地図は使用していません。
+      </div>
+      <div class="page-footer">
+        <span>${surveyor}</span>
+        <span>${pages.length + 1} / ${pages.length + 1}</span>
+      </div>
+    </div>`;
+  }
+
+  container.innerHTML = pages.map((page, pi) => `
+    <div class="print-page ${sizeClass}" id="page-${pi}">
+      <div class="page-header">
+        <h2>境 界 杭 写 真 台 帳</h2>
+        <div class="page-header-info">
+          <span>業務名：${project}</span>
+          <span>所在地：${location}　地番：${chiban}</span>
+          <span>調査日：${date}</span>
+        </div>
+      </div>
+
+      ${page.map(entry => {
+        const s = entry.stake;
+        const p = entry.photo;
+        return `
+        <div class="photo-entry" style="margin-bottom:${entryMargin}">
+          <div class="photo-entry-header" style="font-size:${headerFontSize}">
+            <div class="cell label" style="padding:${cellPadding}">境界点</div>
+            <div class="cell" style="flex:1;padding:${cellPadding}">${s.pointNumber}</div>
+            <div class="cell label" style="padding:${cellPadding}">杭種</div>
+            <div class="cell" style="flex:1;padding:${cellPadding}">${s.stakeType}</div>
+            <div class="cell label" style="padding:${cellPadding}">状況</div>
+            <div class="cell" style="flex:1;padding:${cellPadding}">${s.condition}</div>
+          </div>
+          <div class="photo-entry-body">
+            <div class="photo-entry-img" style="max-height:${imgMaxHeight}px">
+              ${p ? `<img src="${p.dataUrl}" style="transform:rotate(${p.rotation||0}deg)">` : '<span style="color:#aaa">写真なし</span>'}
+              ${p && optNorth && p.meta && isFinite(p.meta.dir) ? northMarkSVG(p.meta.dir, perPage >= 6 ? 26 : 38) : ''}
+              ${p && optBoard && p.board !== false ? blackboardHTML(s, p, perPage >= 4) : ''}
+            </div>
+            <div class="photo-entry-details" style="padding:${detailPadding};font-size:${detailFontSize}">
+              <div class="detail-row"><span class="detail-label">境界点：</span>${s.pointNumber}</div>
+              <div class="detail-row"><span class="detail-label">杭　種：</span>${s.stakeType}</div>
+              <div class="detail-row"><span class="detail-label">状　況：</span>${s.condition}</div>
+              <div class="detail-row"><span class="detail-label">備　考：</span>${[s.notes, p && p.note].filter(Boolean).join('／') || '―'}</div>
+              ${p && optShot ? (() => {
+                const m = p.meta || {}, xy = photoXY(p);
+                return `<div class="detail-row"><span class="detail-label">写真番号：</span>${entry.no}</div>`
+                  + `<div class="detail-row"><span class="detail-label">撮影日時：</span>${m.dateTime ? exifDateToWareki(m.dateTime) : '―'}</div>`
+                  + `<div class="detail-row"><span class="detail-label">撮影方向：</span>${isFinite(m.dir) ? `${dirName(m.dir)}（${m.dir.toFixed(1)}°${m.dirRef === 'M' ? '・磁北' : ''}）` : '―'}</div>`
+                  + (perPage >= 6 ? '' : `<div class="detail-row"><span class="detail-label">撮影位置：</span><span>${xy ? `X=${xy.x.toFixed(3)}<br>Y=${xy.y.toFixed(3)}（${ROMAN[zone]}系）` : '―'}</span></div>`);
+              })() : ''}
+
+            </div>
+          </div>
+        </div>`;
+      }).join('')}
+
+      <div class="page-footer">
+        <span>${surveyor}</span>
+        <span>${pi + 1} / ${pages.length + (mapPage ? 1 : 0)}</span>
+      </div>
+    </div>
+  `).join('') + mapPage;
+}
+
+// ===== EXPORT / IMPORT =====
+function buildSaveData() {
+  return {
+    app: 'StakePhotoDrop',
+    version: '1.1',
+    siteInfo: {
+      location: document.getElementById('field-location').value,
+      chiban: document.getElementById('field-chiban').value,
+      date: document.getElementById('field-date').value,
+      surveyor: document.getElementById('field-surveyor').value,
+      project: document.getElementById('field-project').value,
+      client: document.getElementById('field-client').value,
+      zone: currentZone(),
+    },
+    stakes
+  };
+}
+function exportJSON() {
+  const data = buildSaveData();
+  const blob = new Blob([JSON.stringify(data)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = buildFileName('json');
+  a.click();
+  showToast('データを保存しました');
+}
+
+function importJSON(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (ev) => {
+    try {
+      const data = JSON.parse(ev.target.result);
+      if (data.siteInfo) {
+        document.getElementById('field-location').value = data.siteInfo.location || '';
+        document.getElementById('field-chiban').value = data.siteInfo.chiban || '';
+        document.getElementById('field-date').value = data.siteInfo.date || '';
+        document.getElementById('field-surveyor').value = data.siteInfo.surveyor || '';
+        document.getElementById('field-project').value = data.siteInfo.project || '';
+        document.getElementById('field-client').value = data.siteInfo.client || '';
+        if (data.siteInfo.zone) document.getElementById('field-zone').value = data.siteInfo.zone;
+      }
+      if (data.stakes) {
+        stakes = data.stakes;
+        stakeIdCounter = Math.max(0, ...stakes.map(s => s.id));
+      }
+      renderStakes();
+      updateStakeCount();
+      showToast('データを読み込みました');
+    } catch (err) {
+      showToast('読み込みに失敗しました');
+    }
+  };
+  reader.readAsText(file);
+  e.target.value = '';
+}
+
+// ===== PRINT =====
+function printPages() {
+  const pageSize = document.getElementById('pageSize').value;
+  // Inject @page size for correct print
+  let style = document.getElementById('printSizeStyle');
+  if (!style) {
+    style = document.createElement('style');
+    style.id = 'printSizeStyle';
+    document.head.appendChild(style);
+  }
+  if (pageSize === 'a3') {
+    style.textContent = '@media print { @page { size: A3 portrait; } }';
+  } else {
+    style.textContent = '@media print { @page { size: A4 portrait; } }';
+  }
+  window.print();
+}
+
+// ===== PDF EXPORT =====
+async function exportPDF() {
+  showToast('PDF生成中...');
+  switchTab('preview');
+  await new Promise(r => setTimeout(r, 500));
+
+  const pageSize = document.getElementById('pageSize').value;
+  const { jsPDF } = window.jspdf;
+  const format = pageSize === 'a3' ? 'a3' : 'a4';
+  const wMM = pageSize === 'a3' ? 297 : 210;
+  const hMM = pageSize === 'a3' ? 420 : 297;
+  const pdf = new jsPDF('p', 'mm', format);
+  const pages = document.querySelectorAll('.print-page');
+
+  for (let i = 0; i < pages.length; i++) {
+    const canvas = await html2canvas(pages[i], {
+      scale: 2,
+      useCORS: true,
+      logging: false,
+      backgroundColor: '#ffffff'
+    });
+    const imgData = canvas.toDataURL('image/jpeg', 0.92);
+    if (i > 0) pdf.addPage();
+    pdf.addImage(imgData, 'JPEG', 0, 0, wMM, hMM);
+  }
+
+  pdf.save(buildFileName('pdf'));
+  showToast('PDF出力完了');
+}
+
+// ===== TOAST =====
+function showToast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 2500);
+}
+
+// ===== INIT =====
+document.addEventListener('DOMContentLoaded', () => {
+  const today = localISODate();
+  document.getElementById('field-date').value = today;
+  document.getElementById('field-zone').innerHTML = JGD_ZONES.slice(1).map((z, i) =>
+    `<option value="${i + 1}" ${i + 1 === 6 ? 'selected' : ''}>第${ROMAN[i + 1]}系（${z[2]}）</option>`).join('');
+  renderStakes();
+});
+</script>
+</body>
+</html>
