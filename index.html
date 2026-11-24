@@ -4,9 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>StakePhotoDrop｜境界杭写真台帳</title>
+<!-- ホーム画面アプリ（PWA）用 -->
+<link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="StakePhotoDrop.png">
 <meta name="apple-mobile-web-app-title" content="StakePhotoDrop">
 <meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#4f46e5">
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNTYgMjU2Ij4KICA8cmVjdCB4PSI4IiB5PSI4IiB3aWR0aD0iMjQwIiBoZWlnaHQ9IjI0MCIgcng9IjUyIiBmaWxsPSIjNGY0NmU1Ii8+CiAgPGcgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmZmZmZmIiBzdHJva2Utd2lkdGg9IjE0IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiPgogICAgPHBhdGggZD0iTTQ0IDg4IFY1NiBINzYiLz48cGF0aCBkPSJNMTgwIDU2IEgyMTIgVjg4Ii8+CiAgICA8cGF0aCBkPSJNMjEyIDE2OCBWMjAwIEgxODAiLz48cGF0aCBkPSJNNzYgMjAwIEg0NCBWMTY4Ii8+CiAgICA8cGF0aCBkPSJNOTYgOTYgSDE2MCBWMTcyIEwxMjggMjA2IEw5NiAxNzIgWiIvPgogIDwvZz4KICA8cGF0aCBkPSJNMTI4IDExMiBWMTU2IE0xMDYgMTM0IEgxNTAiIHN0cm9rZT0iI2ZiYmYyNCIgc3Ryb2tlLXdpZHRoPSIxNCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+Cjwvc3ZnPg==">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -512,6 +517,14 @@
   .toast.show { transform: translateY(0); opacity: 1; }
   .toast { z-index: 500; }
 
+  /* ===== ホーム画面に追加の案内（iPhoneのSafariで開いたときだけ） ===== */
+  .a2hs { position: fixed; left: 12px; right: 12px; bottom: calc(12px + env(safe-area-inset-bottom)); z-index: 450;
+    background: var(--surface); border: 1px solid var(--border); border-left: 4px solid var(--accent); border-radius: var(--radius);
+    box-shadow: var(--shadow-lg); padding: 12px 40px 12px 14px; font-size: 13px; line-height: 1.6; color: var(--text); display: none; }
+  .a2hs.show { display: block; }
+  .a2hs b { color: var(--accent-ink); }
+  .a2hs .x { position: absolute; top: 6px; right: 6px; width: 30px; height: 30px; border: 0; background: none; font-size: 18px; color: var(--text-light); }
+
   /* ===== 撮影情報 ===== */
   .photo-meta-badge {
     position: absolute; left: 3px; bottom: 3px;
@@ -746,7 +759,7 @@
   <div class="section-label" id="sideItemLabel">境界点</div>
   <div class="jobs" id="sideStakes"></div>
   <div class="side-foot">
-    <div class="ver">StakePhotoDrop v1.2.1</div>
+    <div class="ver">StakePhotoDrop v1.3</div>
     <div class="row2">
       <button class="btn btn-primary" onclick="saveToFolder()" title="NASの案件フォルダ等に一括保存">📁 フォルダに保存</button>
     </div>
@@ -959,6 +972,11 @@
 
 <!-- TOAST -->
 <div class="toast" id="toast"></div>
+<div class="a2hs" id="a2hs" role="note">
+  <button class="x" onclick="closeA2hs()" aria-label="閉じる">✕</button>
+  <b>ホーム画面に追加できます</b><br>
+  下の共有ボタン（□に↑）→「ホーム画面に追加」で、アイコンから全画面で起動でき、電波がない現場でも使えます。
+</div>
 
 <!-- IMAGE PREVIEW MODAL -->
 <div class="modal-overlay" id="imageModal">
@@ -2565,6 +2583,36 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('tab-edit').addEventListener('change', scheduleAutosave);
   document.getElementById('tab-edit').addEventListener('input', scheduleAutosave);
   restoreAutosave().finally(() => { AUTOSAVE.ready = true; });
+});
+// ===== ホーム画面アプリ（PWA）・オフライン対応 =====
+// https（GitHub Pages）で開いたときだけ Service Worker を登録（事務所PCで直接開く file:// では何もしない）
+if ('serviceWorker' in navigator && window.isSecureContext && /^https?:$/.test(location.protocol)) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').catch(err => console.warn('Service Worker 登録失敗', err));
+  });
+  // 初回（まだオフライン版がない状態）では知らせない。2回目以降に新しい版が入ったときだけ表示
+  const hadSw = !!navigator.serviceWorker.controller;
+  let swReloaded = false;
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    if (swReloaded || !hadSw) return;
+    swReloaded = true;
+    showToast('新しい版を取り込みました。次回起動から反映されます');
+  });
+}
+function isStandaloneApp() {
+  return window.navigator.standalone === true || (window.matchMedia && matchMedia('(display-mode: standalone)').matches);
+}
+function closeA2hs() {
+  document.getElementById('a2hs').classList.remove('show');
+  try { localStorage.setItem('spd-a2hs-closed', '1'); } catch (e) {}
+}
+document.addEventListener('DOMContentLoaded', () => {
+  const ios = /iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  let closed = false;
+  try { closed = localStorage.getItem('spd-a2hs-closed') === '1'; } catch (e) {}
+  if (ios && !isStandaloneApp() && location.protocol === 'https:' && !closed) {
+    setTimeout(() => document.getElementById('a2hs').classList.add('show'), 1500);
+  }
 });
 // 方位・位置の表示更新（現在地マーカー）
 setInterval(() => { if (compass.heading !== null || geo.lat !== null) scheduleLiveMap(); }, 2000);
