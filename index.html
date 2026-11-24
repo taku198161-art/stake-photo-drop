@@ -695,6 +695,13 @@
   .cam-msg { position: absolute; left: 50%; top: 45%; transform: translate(-50%,-50%); background: rgba(0,0,0,.7); border-radius: 12px;
     padding: 10px 16px; font-size: 15px; font-weight: 700; display: none; text-align: center; max-width: 85%; }
   .cam-msg.show { display: block; }
+  .cam-status { position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%); width: min(340px, 88%); background: rgba(0,0,0,.78);
+    border-radius: 14px; padding: 14px 16px; text-align: center; font-size: 14px; line-height: 1.6; display: none; }
+  .cam-status.show { display: block; }
+  .cam-status-btns { display: none; flex-direction: column; gap: 8px; margin-top: 12px; }
+  .cam-status.err .cam-status-btns { display: flex; }
+  .cam-status .cam-btn { font-size: 15px; padding: 10px 12px; position: relative; overflow: hidden; display: block; text-align: center; }
+  .cam-status .cam-btn input { position: absolute; inset: 0; opacity: 0; }
 
   /* ===== PRINT ===== */
   @media print {
@@ -739,7 +746,7 @@
   <div class="section-label" id="sideItemLabel">境界点</div>
   <div class="jobs" id="sideStakes"></div>
   <div class="side-foot">
-    <div class="ver">StakePhotoDrop v1.2</div>
+    <div class="ver">StakePhotoDrop v1.2.1</div>
     <div class="row2">
       <button class="btn btn-primary" onclick="saveToFolder()" title="NASの案件フォルダ等に一括保存">📁 フォルダに保存</button>
     </div>
@@ -914,7 +921,7 @@
 
 <!-- アプリ内カメラ -->
 <div class="cam" id="cam">
-  <video id="camVideo" playsinline muted autoplay></video>
+  <video id="camVideo" playsinline webkit-playsinline muted autoplay onclick="if(this.paused)this.play().catch(()=>{})"></video>
   <div class="cam-flash" id="camFlash"></div>
   <div class="cam-top">
     <input id="camSite" placeholder="現場名（所在地）" oninput="document.getElementById('field-location').value=this.value;scheduleAutosave()">
@@ -925,6 +932,14 @@
     <div class="small" id="camDirSmall">「方位」を押すと方角を表示します</div>
   </div>
   <div class="cam-msg" id="camMsg"></div>
+  <!-- カメラが起動しないときの案内と、iPhone標準カメラでの撮影（予備） -->
+  <div class="cam-status" id="camStatus">
+    <div id="camStatusText">カメラを起動中…</div>
+    <div class="cam-status-btns">
+      <button class="cam-btn" onclick="restartCamera()">🔄 もう一度カメラを起動</button>
+      <label class="cam-btn">📷 iPhoneのカメラで撮影<input type="file" id="camFile" accept="image/*" capture="environment" onchange="camFileShot(this.files);this.value=''"></label>
+    </div>
+  </div>
   <div class="cam-bottom">
     <div class="cam-chips" id="camChips"></div>
     <div class="cam-fields" id="camFields"></div>
@@ -1589,7 +1604,7 @@ function handlePhotoDrop(e, stakeId) {
 function addFilesToTarget(files) {
   let s = stakes.find(t => t.id === shotTargetId);
   if (!s) s = addStake();
-  processPhotoFiles(files, s.id);
+  return processPhotoFiles(files, s.id);
 }
 function resizeToDataUrl(src, MAX = 1200) {
   return new Promise(resolve => {
@@ -2319,36 +2334,137 @@ function addStakeFromSide() {
 }
 
 // ===== アプリ内カメラ（方角を文字で表示・点名／杭種／現場名と連動） =====
-const cam = { stream: null, busy: false };
+const cam = { stream: null, busy: false, gen: 0 };
+const camOpen = () => document.getElementById('cam').classList.contains('on');
+// 映像が実際に届いているか（「準備中」の判定）
+function camReady() {
+  const v = document.getElementById('camVideo');
+  return !!(cam.stream && v.videoWidth > 0 && cam.stream.getVideoTracks().some(t => t.readyState === 'live'));
+}
+// カメラ画面中央の案内。err=true のときは「もう一度」「iPhoneのカメラで撮影」ボタンを出す
+function camStatus(text, err) {
+  const el = document.getElementById('camStatus');
+  if (!text) { el.classList.remove('show', 'err'); return; }
+  document.getElementById('camStatusText').innerHTML = text;
+  el.classList.add('show'); el.classList.toggle('err', !!err);
+}
+function camErrText(e) {
+  const n = (e && e.name) || '';
+  if (n === 'NotAllowedError' || n === 'SecurityError')
+    return 'カメラの使用が許可されていません。<br>iPhoneの「設定 → アプリ → Safari → カメラ」を「確認」または「許可」にしてから、もう一度開いてください。<br>下の「iPhoneのカメラで撮影」なら今すぐ撮影できます';
+  if (n === 'NotReadableError' || n === 'AbortError')
+    return 'カメラを他のアプリが使っているため起動できません。<br>他のカメラアプリやビデオ通話を閉じて「もう一度」を押してください';
+  if (n === 'NotFoundError' || n === 'OverconstrainedError')
+    return 'カメラが見つかりませんでした。<br>「iPhoneのカメラで撮影」を使ってください';
+  if (n === 'TimeoutError')
+    return 'カメラの映像が届きません。<br>「もう一度」を押してください（低電力モードでは自動で映らないことがあります）。<br>直らない場合は「iPhoneのカメラで撮影」を使ってください';
+  return `カメラを起動できませんでした（${escSide(n || String(e))}）。<br>「iPhoneのカメラで撮影」を使ってください`;
+}
+// 解像度の指定が合わない端末もあるので、条件をゆるめながら順に試す（写真は長辺1200pxに縮小するので高解像度は不要）
+async function getCamStream() {
+  const tries = [
+    { video: { facingMode: { ideal: 'environment' }, width: { ideal: 1920 }, height: { ideal: 1440 } }, audio: false },
+    { video: { facingMode: 'environment' }, audio: false },
+    { video: true, audio: false },
+  ];
+  let err;
+  for (const c of tries) {
+    try { return await navigator.mediaDevices.getUserMedia(c); }
+    catch (e) { err = e; if (e.name === 'NotAllowedError' || e.name === 'SecurityError') break; }
+  }
+  throw err;
+}
+// 映像の1コマ目が届くまで待つ（play() が拒否されても繰り返し試す）
+function waitVideo(v, ms) {
+  return new Promise((resolve, reject) => {
+    const t0 = Date.now(), gen = cam.gen;
+    const tick = () => {
+      if (gen !== cam.gen) return reject(Object.assign(new Error('cancel'), { name: 'Cancel' }));
+      if (v.videoWidth > 0 && !v.paused) return resolve();
+      if (Date.now() - t0 > ms) return reject(Object.assign(new Error('timeout'), { name: 'TimeoutError' }));
+      if (v.paused) v.play().catch(() => {});
+      setTimeout(tick, 250);
+    };
+    tick();
+  });
+}
+function stopCamStream() {
+  if (cam.stream) cam.stream.getTracks().forEach(t => t.stop());
+  cam.stream = null;
+  const v = document.getElementById('camVideo');
+  v.pause(); v.srcObject = null;
+}
+async function startCameraStream() {
+  const gen = ++cam.gen;
+  stopCamStream();
+  camStatus('カメラを起動中…<br><span style="font-size:12px;opacity:.85">「カメラへのアクセスを求めています」と出たら「許可」を押してください</span>');
+  const v = document.getElementById('camVideo');
+  try {
+    const stream = await getCamStream();
+    if (gen !== cam.gen || !camOpen()) { stream.getTracks().forEach(t => t.stop()); return; }
+    cam.stream = stream;
+    stream.getVideoTracks().forEach(t => t.addEventListener('ended', () => {
+      if (cam.stream === stream && camOpen()) camStatus('カメラが止まりました。「もう一度」を押してください', true);
+    }));
+    v.muted = true; v.setAttribute('playsinline', ''); v.setAttribute('webkit-playsinline', '');
+    v.srcObject = stream;
+    await waitVideo(v, 8000);
+    if (gen === cam.gen) camStatus(null);
+  } catch (e) {
+    if (gen !== cam.gen || !camOpen() || e.name === 'Cancel') return;
+    camStatus(camErrText(e), true);
+  }
+}
+// 「もう一度」：映像が止まっているだけなら再生し直し、だめならカメラを起動し直す
+function restartCamera() {
+  const v = document.getElementById('camVideo');
+  if (cam.stream && cam.stream.getVideoTracks().some(t => t.readyState === 'live')) {
+    v.play().catch(() => {});                       // ボタン操作の中で再生（低電力モード対策）
+    camStatus('カメラを起動中…');
+    const gen = cam.gen;
+    waitVideo(v, 3000).then(() => { if (gen === cam.gen) camStatus(null); })
+      .catch(e => { if (gen === cam.gen && e.name !== 'Cancel') startCameraStream(); });
+    return;
+  }
+  startCameraStream();
+}
 async function openCamera(targetId) {
   if (targetId) shotTargetId = targetId;
   else { const v = document.getElementById('shotTarget').value; shotTargetId = v === 'new' ? null : parseInt(v); }
   if (!stakes.some(s => s.id === shotTargetId)) addStake();
-  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-    showToast('この画面ではカメラを使えません（iPhoneはHTTPSで開く必要があります）。「写真を選んで追加」を使ってください');
-    return;
-  }
-  startSensors();   // ボタン操作の中で方位・現在地の許可を求める
   document.getElementById('camSite').value = document.getElementById('field-location').value;
   document.getElementById('cam').classList.add('on');
   renderCamUI(); updateCamDir();
-  try {
-    cam.stream = await navigator.mediaDevices.getUserMedia({
-      video: { facingMode: { ideal: 'environment' }, width: { ideal: 4032 }, height: { ideal: 3024 } }, audio: false });
-    const v = document.getElementById('camVideo');
-    v.srcObject = cam.stream;
-    await v.play().catch(() => {});
-  } catch (e) {
-    closeCamera();
-    showToast('カメラを起動できませんでした。カメラの使用を許可してください（設定 → Safari → カメラ）');
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    startSensors();
+    camStatus(window.isSecureContext
+      ? 'このブラウザではアプリ内カメラを使えません。<br>「iPhoneのカメラで撮影」を使ってください'
+      : 'HTTPSで開いていないため、アプリ内カメラを使えません（公開ページ https://… から開いてください）。<br>「iPhoneのカメラで撮影」なら撮影できます', true);
+    return;
   }
+  const p = startCameraStream();   // カメラの許可を先に求める
+  startSensors();                  // 同じボタン操作の中で方位・現在地の許可も求める
+  await p;
+}
+// iPhone標準カメラで撮った写真を、選択中の点に追加
+async function camFileShot(files) {
+  if (!files || !files.length) return;
+  await addFilesToTarget(files);
+  renderCamUI();
+  camMsg('写真を追加しました');
 }
 function closeCamera() {
-  if (cam.stream) cam.stream.getTracks().forEach(t => t.stop());
-  cam.stream = null;
-  document.getElementById('camVideo').srcObject = null;
+  cam.gen++;
+  stopCamStream();
+  camStatus(null);
   document.getElementById('cam').classList.remove('on');
 }
+// 画面ロック・アプリ切替から戻ったとき、止まったカメラを起動し直す
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState !== 'visible' || !camOpen()) return;
+  if (!camReady()) startCameraStream();
+  else { const v = document.getElementById('camVideo'); if (v.paused) v.play().catch(() => {}); }
+});
 function camMsg(t) {
   const el = document.getElementById('camMsg');
   el.innerHTML = t; el.classList.add('show');
@@ -2395,7 +2511,12 @@ function camNewItem() {
 }
 async function takeShot() {
   const v = document.getElementById('camVideo');
-  if (cam.busy || !cam.stream || !v.videoWidth) { camMsg('カメラの準備中です'); return; }
+  if (cam.busy) return;
+  if (!camReady()) {
+    // アプリ内カメラが使えないときは、その場でiPhone標準カメラを開く（ボタン操作の中で呼ぶ必要がある）
+    document.getElementById('camFile').click();
+    return;
+  }
   const s = stakes.find(t => t.id === shotTargetId) || addStake();
   cam.busy = true;
   const fl = document.getElementById('camFlash');
@@ -2406,6 +2527,7 @@ async function takeShot() {
       Object.assign(meta, { dir: Math.round(compass.heading * 10) / 10, dirRef: compass.ref || 'M', dirSource: 'compass' });
     Object.assign(meta, geoFallback(null) || {});
     const dataUrl = await resizeToDataUrl(v);
+    if (!dataUrl || dataUrl.length < 1000) throw new Error('empty frame');
     const photo = addPhotoToItem(s, dataUrl, meta);
     const no = photoNoOf(photo);
     camMsg(`写真${no} → ${escSide(itemName(s))}<br><span style="font-size:12px;font-weight:400">${isFinite(meta.dir) ? dirName(meta.dir) + ' ' + meta.dir.toFixed(0) + '°' : '方位なし'}・${isFinite(meta.lat) ? '位置あり' : '位置なし'}　写真帳・撮影方向図に追加</span>`);
