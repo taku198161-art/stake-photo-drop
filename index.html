@@ -765,9 +765,12 @@
   <div class="section-label" id="sideItemLabel">境界点</div>
   <div class="jobs" id="sideStakes"></div>
   <div class="side-foot">
-    <div class="ver">StakePhotoDrop v1.3.1</div>
+    <div class="ver">StakePhotoDrop v1.4</div>
     <div class="row2">
-      <button class="btn btn-primary" onclick="saveToFolder()" title="NASの案件フォルダ等に一括保存">📁 フォルダに保存</button>
+      <button class="btn btn-primary" onclick="openDriveSave()" title="iPhoneの「ファイルに保存」でGoogleドライブの案件フォルダ／写真フォルダへ保存">☁ ドライブに保存</button>
+    </div>
+    <div class="row2">
+      <button class="btn" onclick="saveToFolder()" title="PC（Chrome / Edge）：Googleドライブ（G:）やNASの案件フォルダを選んで一括保存">📁 フォルダに保存</button>
     </div>
     <div class="row2">
       <button class="btn" onclick="exportJSON()" title="データ保存">💾 保存</button>
@@ -982,6 +985,31 @@
   <button class="x" onclick="closeA2hs()" aria-label="閉じる">✕</button>
   <b>ホーム画面に追加できます</b><br>
   下の共有ボタン（□に↑）→「ホーム画面に追加」で、アイコンから全画面で起動でき、電波がない現場でも使えます。
+</div>
+
+<!-- GOOGLE DRIVE SAVE MODAL（iPhoneの共有シート経由。アプリから外部へは直接送信しない） -->
+<div class="modal-overlay" id="driveModal">
+  <div class="modal" style="max-width:460px">
+    <div class="modal-title">
+      ☁ Googleドライブに保存
+      <button class="btn btn-sm" onclick="closeDriveSave()">✕ 閉じる</button>
+    </div>
+    <div style="font-size:13px;line-height:1.7;color:var(--text-secondary,#475569)">
+      ① 保存するものを選んで「準備する」<br>
+      ② 「共有画面を開く」→「<b>ファイルに保存</b>」<br>
+      ③ 「ドライブ」→ <b>案件フォルダ ＞ 写真</b> を選んで「保存」
+    </div>
+    <div id="driveOpts" style="margin:14px 0;display:flex;flex-direction:column;gap:8px;font-size:14px">
+      <label><input type="checkbox" id="dvPhotos" checked> 写真（<span id="dvPhotoCount">0</span>枚）</label>
+      <label><input type="checkbox" id="dvJson" checked> 台帳データ（JSON・あとで読込用）</label>
+      <label><input type="checkbox" id="dvCsv" checked> 撮影位置一覧（CSV）</label>
+      <label><input type="checkbox" id="dvPdf"> 写真台帳（PDF・作成に時間がかかります）</label>
+    </div>
+    <div id="driveNames" style="font-size:12px;color:#64748b;word-break:break-all;margin-bottom:12px"></div>
+    <div style="display:flex;gap:8px;justify-content:flex-end">
+      <button class="btn btn-primary" id="driveBtn" onclick="driveStep()">準備する</button>
+    </div>
+  </div>
 </div>
 
 <!-- IMAGE PREVIEW MODAL -->
@@ -1457,7 +1485,7 @@ function blackboardHTML(s, p, small) {
   </div>`;
 }
 
-// ===== フォルダ（NAS）へ一括保存 =====
+// ===== フォルダ（NAS・PCのGoogleドライブ）へ一括保存 =====
 // Chrome / Edge のフォルダ選択機能を使用。NASの案件フォルダ（例：Z:\…）を選ぶとそこへ直接書き込む。
 async function saveToFolder() {
   if (!window.showDirectoryPicker) {
@@ -1481,13 +1509,103 @@ async function saveToFolder() {
     for (const s of stakes) for (const p of s.photos) {
       no++;
       const blob = await (await fetch(p.dataUrl)).blob();
-      const safe = String(itemName(s)).replace(/[\\/:*?"<>|]/g, '_');
-      await write(pdir, `写真${String(no).padStart(2, '0')}_${safe}.jpg`, blob);
+      await write(pdir, photoFileName(no, s), blob);
     }
     showToast(`「${name}」に保存しました（写真${no}枚）`);
   } catch (e) {
     console.error(e);
     showToast('保存に失敗しました。書き込み権限のあるフォルダか確認してください');
+  }
+}
+
+// ===== Googleドライブへ保存（iPhoneの共有シート →「ファイルに保存」） =====
+// アプリはファイルを作って共有画面に渡すだけ。どこへ保存するかは本人が共有画面で選ぶ（API・ログイン不要、外部送信なし）。
+// iPhoneは処理の後だと共有画面を開けないため、「準備する」→「共有画面を開く」の2回タップにしている。
+let driveFiles = null;
+function photoFileName(no, s) {
+  const loc = (document.getElementById('field-location').value || '現場').replace(/[\\/:*?"<>|]/g, '_');
+  const date = toWareki(document.getElementById('field-date').value || localISODate()) || localISODate();
+  const item = String(itemName(s) || '').replace(/[\\/:*?"<>|]/g, '_');
+  return `${loc}_写真${String(no).padStart(2, '0')}${item ? '_' + item : ''}_${date}.jpg`;
+}
+function openDriveSave() {
+  driveFiles = null;
+  let n = 0; for (const s of stakes) n += s.photos.length;
+  document.getElementById('dvPhotoCount').textContent = n;
+  document.getElementById('driveOpts').style.display = '';
+  const loc = document.getElementById('field-location').value;
+  document.getElementById('driveNames').textContent = loc ? `ファイル名の例：${photoFileName(1, stakes.find(s => s.photos.length) || stakes[0] || {})}` : '※現場（所在）が空欄です。ファイル名は「現場_…」になります';
+  const b = document.getElementById('driveBtn');
+  b.textContent = '準備する'; b.disabled = false;
+  document.getElementById('driveModal').classList.add('active');
+}
+function closeDriveSave() {
+  driveFiles = null;
+  document.getElementById('driveModal').classList.remove('active');
+}
+async function driveStep() {
+  const b = document.getElementById('driveBtn');
+  if (driveFiles) return driveShare();
+  if (!navigator.canShare) {
+    closeDriveSave();
+    showToast('この端末は共有保存に未対応です。PCは「📁 フォルダに保存」でドライブ（G:）の写真フォルダを選んでください');
+    return;
+  }
+  b.disabled = true; b.textContent = '準備中…';
+  try {
+    const files = [];
+    const mk = (blob, name, type) => new File([blob], name, { type, lastModified: Date.now() });
+    if (document.getElementById('dvPhotos').checked) {
+      let no = 0;
+      for (const s of stakes) for (const p of s.photos) {
+        no++;
+        const blob = await (await fetch(p.dataUrl)).blob();
+        files.push(mk(blob, photoFileName(no, s), 'image/jpeg'));
+      }
+    }
+    if (document.getElementById('dvJson').checked)
+      files.push(mk(new Blob([JSON.stringify(buildSaveData())]), buildFileName('json'), 'application/json'));
+    if (document.getElementById('dvCsv').checked)
+      files.push(mk(new Blob([buildPhotoCSV() || '﻿']), buildFileName('csv', '撮影位置一覧'), 'text/csv'));
+    if (document.getElementById('dvPdf').checked) {
+      try {
+        const pdf = await buildPDF();
+        files.push(mk(pdf.output('blob'), buildFileName('pdf'), 'application/pdf'));
+      } catch (e) { console.error(e); showToast('PDFを作れなかったため、PDF以外を保存します'); }
+      document.getElementById('driveModal').classList.add('active');
+    }
+    if (!files.length) { b.disabled = false; b.textContent = '準備する'; showToast('保存するものを選んでください'); return; }
+    if (!navigator.canShare({ files })) {
+      // JSON・CSVを受け付けない端末向け：写真・PDFだけで再確認
+      const ok = files.filter(f => /^(image\/|application\/pdf)/.test(f.type));
+      if (ok.length && navigator.canShare({ files: ok })) {
+        showToast('この端末ではJSON・CSVを共有できないため、写真・PDFのみ保存します');
+        files.length = 0; files.push(...ok);
+      } else {
+        closeDriveSave();
+        showToast('この端末は共有保存に未対応です。PCは「📁 フォルダに保存」を使ってください');
+        return;
+      }
+    }
+    driveFiles = files;
+    document.getElementById('driveOpts').style.display = 'none';
+    document.getElementById('driveNames').textContent = `${files.length}件の準備ができました。共有画面で「ファイルに保存」→ ドライブの案件フォルダ ＞ 写真 を選んでください。`;
+    b.disabled = false; b.textContent = '📤 共有画面を開く';
+  } catch (e) {
+    console.error(e);
+    b.disabled = false; b.textContent = '準備する';
+    showToast('準備に失敗しました');
+  }
+}
+async function driveShare() {
+  try {
+    await navigator.share({ files: driveFiles });
+    closeDriveSave();
+    showToast('共有画面での保存を受け付けました（保存先はドライブで確認してください）');
+  } catch (e) {
+    if (e && e.name === 'AbortError') return; // キャンセル：もう一度押せる
+    console.error(e);
+    showToast('共有画面を開けませんでした。もう一度押してください');
   }
 }
 
@@ -2312,6 +2430,11 @@ window.addEventListener('resize', () => {
   if (document.getElementById('tab-preview').classList.contains('active')) fitPreviewPages();
 });
 async function exportPDF() {
+  const pdf = await buildPDF();
+  pdf.save(buildFileName('pdf'));
+  showToast('PDF出力完了');
+}
+async function buildPDF() {
   showToast('PDF生成中...');
   switchTab('preview');
   await new Promise(r => setTimeout(r, 500));
@@ -2338,8 +2461,7 @@ async function exportPDF() {
   }
 
   fitPreviewPages();
-  pdf.save(buildFileName('pdf'));
-  showToast('PDF出力完了');
+  return pdf;
 }
 
 
