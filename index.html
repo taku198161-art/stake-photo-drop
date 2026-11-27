@@ -697,6 +697,9 @@
   .cam-fields select, .cam-fields input { flex: 1; min-width: 0; background: rgba(0,0,0,.45); color: #fff; border: 1px solid rgba(255,255,255,.45);
     border-radius: 10px; padding: 7px 8px; font: inherit; font-size: 14px; }
   .cam-fields option { color: #000; }
+  .cam-fields { align-items: flex-start; }
+  .cam-free { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
+  .cam-free select, .cam-free input { flex: none; width: 100%; }
   .cam-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
   .cam-shutter { width: 74px; height: 74px; border-radius: 50%; border: 5px solid #fff; background: rgba(255,255,255,.25); cursor: pointer; flex: none; }
   .cam-shutter:active { background: #fff; }
@@ -730,7 +733,8 @@
       padding: 10mm 15mm;
       width: 100%;
     }
-    .preview-container { gap: 0; }
+    .preview-container { gap: 0; overflow: visible; }
+    .print-page { zoom: 1 !important; }
     @page { margin: 0; }
   }
 
@@ -740,8 +744,10 @@
     .app-body { padding: 16px; }
     .stake-body { grid-template-columns: 1fr; }
     .form-grid { grid-template-columns: 1fr; }
-    .print-page { width: 100%; min-height: auto; padding: 8mm; }
   }
+  /* 写真帳のプレビュー：画面幅に合わせて用紙ごと縮小（印刷・PDFは実寸） */
+  .preview-container { overflow-x: hidden; }
+  .free-input { margin-top: 6px; }
 </style>
 </head>
 <body>
@@ -759,7 +765,7 @@
   <div class="section-label" id="sideItemLabel">境界点</div>
   <div class="jobs" id="sideStakes"></div>
   <div class="side-foot">
-    <div class="ver">StakePhotoDrop v1.3</div>
+    <div class="ver">StakePhotoDrop v1.3.1</div>
     <div class="row2">
       <button class="btn btn-primary" onclick="saveToFolder()" title="NASの案件フォルダ等に一括保存">📁 フォルダに保存</button>
     </div>
@@ -1511,10 +1517,27 @@ const PAT = {
 const STAKE_TYPES = ['コンクリート杭', '金属標', 'プラスチック杭', '木杭', '石杭', '鋲', '刻み', 'ペンキ', 'その他'];
 const CONDITIONS = ['新設', '復元', '既設'];
 const BLD_CATS = ['外観', '内部', '屋根', '基礎', '附属建物', '設備', 'その他'];
-const BLD_FLOORS = ['―', '1階', '2階', '3階', '4階', '地階', '屋上'];
-const BLD_PLACES = ['外観（北側）', '外観（東側）', '外観（南側）', '外観（西側）', '外観（北東から）', '外観（南東から）', '外観（南西から）', '外観（北西から）',
-  '玄関', '居間', '台所', '食堂', '和室', '洋室', '寝室', '浴室', '洗面所', '便所', '廊下', '階段', '納戸', '車庫', '倉庫', '事務所', '店舗',
-  '屋根', '基礎', '附属建物', '給湯器', '分電盤'];
+const BLD_FLOORS = ['―', '1階', '2階', '3階', '地階', '屋上'];
+const BLD_PLACES = ['外観', '台所', '便所', '洋室', '和室', 'リビング', 'ダイニング'];
+const FREE = '__free';   // 「手入力」の選択肢
+// 選択肢＋手入力（一覧に無い値は手入力として表示）
+function selectFreeHTML(s, field, list, cur, cls, ph) {
+  const free = !list.includes(cur);
+  return `<select class="${cls.sel}" onchange="pickFree(${s.id},'${field}',this)">${list.map(t => `<option ${cur === t ? 'selected' : ''}>${t}</option>`).join('')}<option value="${FREE}" ${free ? 'selected' : ''}>手入力</option></select>`
+    + `<input class="${cls.inp}" style="${free ? '' : 'display:none'}" value="${free ? escSide(cur || '') : ''}" placeholder="${ph}"
+         onchange="updateStakeField(${s.id},'${field}',this.value.trim());renderStakes()">`;
+}
+function pickFree(id, field, sel) {
+  const inp = sel.nextElementSibling;
+  if (sel.value === FREE) {
+    inp.style.display = '';
+    inp.focus();
+    return;
+  }
+  inp.style.display = 'none';
+  updateStakeField(id, field, sel.value);
+  renderStakes();
+}
 function P() { return PAT[pattern]; }
 function itemName(s) { return pattern === 'building' ? (s.place || s.pointNumber) : s.pointNumber; }
 function itemSub(s) {
@@ -1550,7 +1573,7 @@ function setPattern(p, silent) {
 // ===== STAKE MANAGEMENT =====
 function addStake() {
   const id = ++stakeIdCounter;
-  const place = pattern === 'building' ? (BLD_PLACES.slice(0, 4).find(n => !stakes.some(s => s.place === n)) || '居間') : '';
+  const place = pattern === 'building' ? '外観' : '';
   const ext = !place || place.startsWith('外観');
   stakes.push({
     id,
@@ -1582,6 +1605,8 @@ function updateStakeField(id, field, value) {
   if (field === 'place') {      // 撮影箇所名から区分を推定
     if (/^外観/.test(value)) stake.bcat = '外観';
     else if (BLD_CATS.includes(value)) stake.bcat = value;
+    else if (BLD_PLACES.includes(value) && stake.bcat === '外観') stake.bcat = '内部';
+    if (stake.bcat === '内部' && (!stake.floor || stake.floor === '―')) stake.floor = '1階';
   }
   renderShotTarget();
   scheduleLiveMap();
@@ -1809,8 +1834,7 @@ function itemFormHTML(s) {
   if (pattern === 'building') return `
           <div class="form-group">
             <label class="form-label">撮影箇所</label>
-            <input class="form-input" list="bldPlaces" value="${escSide(s.place || '')}" placeholder="例：外観（南側）、居間"
-                   onchange="updateStakeField(${s.id},'place',this.value);renderStakes()">
+            ${selectFreeHTML(s, 'place', BLD_PLACES, s.place || '', { sel: 'form-select', inp: 'form-input free-input' }, '例：寝室、玄関、外観（南側）')}
           </div>
           <div class="coord-row" style="grid-template-columns:1fr 1fr">
             <div class="form-group">
@@ -1819,7 +1843,7 @@ function itemFormHTML(s) {
             </div>
             <div class="form-group">
               <label class="form-label">階</label>
-              <select class="form-select" onchange="updateStakeField(${s.id},'floor',this.value)">${optionsHTML(BLD_FLOORS, s.floor || '―')}</select>
+              ${selectFreeHTML(s, 'floor', BLD_FLOORS, s.floor || '―', { sel: 'form-select', inp: 'form-input free-input' }, '例：中2階、ロフト')}
             </div>
           </div>`;
   return `
@@ -2138,6 +2162,7 @@ function renderPreview() {
       </div>
     </div>
   `).join('') + mapPage;
+  fitPreviewPages();
 }
 
 // ===== EXPORT / IMPORT =====
@@ -2271,6 +2296,21 @@ function printPages() {
 }
 
 // ===== PDF EXPORT =====
+// 写真帳の用紙が画面からはみ出さないよう縮小表示（スマホで見切れる対策）
+function fitPreviewPages() {
+  const box = document.getElementById('previewContainer');
+  const pages = box.querySelectorAll('.print-page');
+  pages.forEach(pg => pg.style.zoom = '');
+  const avail = box.clientWidth;
+  if (!avail) return;
+  pages.forEach(pg => {
+    const w = pg.offsetWidth;
+    if (w > avail) pg.style.zoom = (avail / w).toFixed(4);
+  });
+}
+window.addEventListener('resize', () => {
+  if (document.getElementById('tab-preview').classList.contains('active')) fitPreviewPages();
+});
 async function exportPDF() {
   showToast('PDF生成中...');
   switchTab('preview');
@@ -2284,6 +2324,7 @@ async function exportPDF() {
   const pdf = new jsPDF('p', 'mm', format);
   const pages = document.querySelectorAll('.print-page');
 
+  pages.forEach(pg => pg.style.zoom = '');   // PDFは実寸で取り込む
   for (let i = 0; i < pages.length; i++) {
     const canvas = await html2canvas(pages[i], {
       scale: 2,
@@ -2296,6 +2337,7 @@ async function exportPDF() {
     pdf.addImage(imgData, 'JPEG', 0, 0, wMM, hMM);
   }
 
+  fitPreviewPages();
   pdf.save(buildFileName('pdf'));
   showToast('PDF出力完了');
 }
@@ -2509,9 +2551,9 @@ function renderCamUI() {
   const f = document.getElementById('camFields');
   if (!s) { f.innerHTML = ''; }
   else if (pattern === 'building') {
-    f.innerHTML = `<input list="bldPlaces" value="${escSide(s.place || '')}" placeholder="撮影箇所" onchange="updateStakeField(${s.id},'place',this.value);renderStakes()">
-      <select onchange="updateStakeField(${s.id},'bcat',this.value)">${optionsHTML(BLD_CATS, s.bcat || '外観')}</select>
-      <select onchange="updateStakeField(${s.id},'floor',this.value)">${optionsHTML(BLD_FLOORS, s.floor || '―')}</select>`;
+    f.innerHTML = `<span class="cam-free">${selectFreeHTML(s, 'place', BLD_PLACES, s.place || '', { sel: '', inp: '' }, '撮影箇所')}</span>
+      <span class="cam-free">${selectFreeHTML(s, 'floor', BLD_FLOORS, s.floor || '―', { sel: '', inp: '' }, '階')}</span>
+      <select onchange="updateStakeField(${s.id},'bcat',this.value)">${optionsHTML(BLD_CATS, s.bcat || '外観')}</select>`;
   } else {
     f.innerHTML = `<input value="${escSide(s.pointNumber)}" placeholder="点名" onchange="updateStakeField(${s.id},'pointNumber',this.value);renderStakes()">
       <select onchange="updateStakeField(${s.id},'stakeType',this.value)">${optionsHTML(STAKE_TYPES, s.stakeType)}</select>
@@ -2575,9 +2617,6 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('field-date').value = today;
   document.getElementById('field-zone').innerHTML = JGD_ZONES.slice(1).map((z, i) =>
     `<option value="${i + 1}" ${i + 1 === 6 ? 'selected' : ''}>第${ROMAN[i + 1]}系（${z[2]}）</option>`).join('');
-  const dl = document.createElement('datalist'); dl.id = 'bldPlaces';
-  dl.innerHTML = BLD_PLACES.map(n => `<option value="${n}">`).join('');
-  document.body.appendChild(dl);
   setPattern('land', true);
   // 現場情報の入力も一時保存
   document.getElementById('tab-edit').addEventListener('change', scheduleAutosave);
