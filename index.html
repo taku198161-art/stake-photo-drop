@@ -697,6 +697,9 @@
   .cam-fields select, .cam-fields input { flex: 1; min-width: 0; background: rgba(0,0,0,.45); color: #fff; border: 1px solid rgba(255,255,255,.45);
     border-radius: 10px; padding: 7px 8px; font: inherit; font-size: 14px; }
   .cam-fields option { color: #000; }
+  .cam-fields { align-items: flex-start; }
+  .cam-free { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
+  .cam-free select, .cam-free input { flex: none; width: 100%; }
   .cam-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
   .cam-shutter { width: 74px; height: 74px; border-radius: 50%; border: 5px solid #fff; background: rgba(255,255,255,.25); cursor: pointer; flex: none; }
   .cam-shutter:active { background: #fff; }
@@ -730,7 +733,8 @@
       padding: 10mm 15mm;
       width: 100%;
     }
-    .preview-container { gap: 0; }
+    .preview-container { gap: 0; overflow: visible; }
+    .print-page { zoom: 1 !important; }
     @page { margin: 0; }
   }
 
@@ -740,8 +744,10 @@
     .app-body { padding: 16px; }
     .stake-body { grid-template-columns: 1fr; }
     .form-grid { grid-template-columns: 1fr; }
-    .print-page { width: 100%; min-height: auto; padding: 8mm; }
   }
+  /* 写真帳のプレビュー：画面幅に合わせて用紙ごと縮小（印刷・PDFは実寸） */
+  .preview-container { overflow-x: hidden; }
+  .free-input { margin-top: 6px; }
 </style>
 </head>
 <body>
@@ -759,9 +765,12 @@
   <div class="section-label" id="sideItemLabel">境界点</div>
   <div class="jobs" id="sideStakes"></div>
   <div class="side-foot">
-    <div class="ver">StakePhotoDrop v1.3</div>
+    <div class="ver">StakePhotoDrop v1.4</div>
     <div class="row2">
-      <button class="btn btn-primary" onclick="saveToFolder()" title="NASの案件フォルダ等に一括保存">📁 フォルダに保存</button>
+      <button class="btn btn-primary" onclick="openDriveSave()" title="iPhoneの「ファイルに保存」でGoogleドライブの案件フォルダ／写真フォルダへ保存">☁ ドライブに保存</button>
+    </div>
+    <div class="row2">
+      <button class="btn" onclick="saveToFolder()" title="PC（Chrome / Edge）：Googleドライブ（G:）やNASの案件フォルダを選んで一括保存">📁 フォルダに保存</button>
     </div>
     <div class="row2">
       <button class="btn" onclick="exportJSON()" title="データ保存">💾 保存</button>
@@ -976,6 +985,31 @@
   <button class="x" onclick="closeA2hs()" aria-label="閉じる">✕</button>
   <b>ホーム画面に追加できます</b><br>
   下の共有ボタン（□に↑）→「ホーム画面に追加」で、アイコンから全画面で起動でき、電波がない現場でも使えます。
+</div>
+
+<!-- GOOGLE DRIVE SAVE MODAL（iPhoneの共有シート経由。アプリから外部へは直接送信しない） -->
+<div class="modal-overlay" id="driveModal">
+  <div class="modal" style="max-width:460px">
+    <div class="modal-title">
+      ☁ Googleドライブに保存
+      <button class="btn btn-sm" onclick="closeDriveSave()">✕ 閉じる</button>
+    </div>
+    <div style="font-size:13px;line-height:1.7;color:var(--text-secondary,#475569)">
+      ① 保存するものを選んで「準備する」<br>
+      ② 「共有画面を開く」→「<b>ファイルに保存</b>」<br>
+      ③ 「ドライブ」→ <b>案件フォルダ ＞ 写真</b> を選んで「保存」
+    </div>
+    <div id="driveOpts" style="margin:14px 0;display:flex;flex-direction:column;gap:8px;font-size:14px">
+      <label><input type="checkbox" id="dvPhotos" checked> 写真（<span id="dvPhotoCount">0</span>枚）</label>
+      <label><input type="checkbox" id="dvJson" checked> 台帳データ（JSON・あとで読込用）</label>
+      <label><input type="checkbox" id="dvCsv" checked> 撮影位置一覧（CSV）</label>
+      <label><input type="checkbox" id="dvPdf"> 写真台帳（PDF・作成に時間がかかります）</label>
+    </div>
+    <div id="driveNames" style="font-size:12px;color:#64748b;word-break:break-all;margin-bottom:12px"></div>
+    <div style="display:flex;gap:8px;justify-content:flex-end">
+      <button class="btn btn-primary" id="driveBtn" onclick="driveStep()">準備する</button>
+    </div>
+  </div>
 </div>
 
 <!-- IMAGE PREVIEW MODAL -->
@@ -1451,7 +1485,7 @@ function blackboardHTML(s, p, small) {
   </div>`;
 }
 
-// ===== フォルダ（NAS）へ一括保存 =====
+// ===== フォルダ（NAS・PCのGoogleドライブ）へ一括保存 =====
 // Chrome / Edge のフォルダ選択機能を使用。NASの案件フォルダ（例：Z:\…）を選ぶとそこへ直接書き込む。
 async function saveToFolder() {
   if (!window.showDirectoryPicker) {
@@ -1475,13 +1509,103 @@ async function saveToFolder() {
     for (const s of stakes) for (const p of s.photos) {
       no++;
       const blob = await (await fetch(p.dataUrl)).blob();
-      const safe = String(itemName(s)).replace(/[\\/:*?"<>|]/g, '_');
-      await write(pdir, `写真${String(no).padStart(2, '0')}_${safe}.jpg`, blob);
+      await write(pdir, photoFileName(no, s), blob);
     }
     showToast(`「${name}」に保存しました（写真${no}枚）`);
   } catch (e) {
     console.error(e);
     showToast('保存に失敗しました。書き込み権限のあるフォルダか確認してください');
+  }
+}
+
+// ===== Googleドライブへ保存（iPhoneの共有シート →「ファイルに保存」） =====
+// アプリはファイルを作って共有画面に渡すだけ。どこへ保存するかは本人が共有画面で選ぶ（API・ログイン不要、外部送信なし）。
+// iPhoneは処理の後だと共有画面を開けないため、「準備する」→「共有画面を開く」の2回タップにしている。
+let driveFiles = null;
+function photoFileName(no, s) {
+  const loc = (document.getElementById('field-location').value || '現場').replace(/[\\/:*?"<>|]/g, '_');
+  const date = toWareki(document.getElementById('field-date').value || localISODate()) || localISODate();
+  const item = String(itemName(s) || '').replace(/[\\/:*?"<>|]/g, '_');
+  return `${loc}_写真${String(no).padStart(2, '0')}${item ? '_' + item : ''}_${date}.jpg`;
+}
+function openDriveSave() {
+  driveFiles = null;
+  let n = 0; for (const s of stakes) n += s.photos.length;
+  document.getElementById('dvPhotoCount').textContent = n;
+  document.getElementById('driveOpts').style.display = '';
+  const loc = document.getElementById('field-location').value;
+  document.getElementById('driveNames').textContent = loc ? `ファイル名の例：${photoFileName(1, stakes.find(s => s.photos.length) || stakes[0] || {})}` : '※現場（所在）が空欄です。ファイル名は「現場_…」になります';
+  const b = document.getElementById('driveBtn');
+  b.textContent = '準備する'; b.disabled = false;
+  document.getElementById('driveModal').classList.add('active');
+}
+function closeDriveSave() {
+  driveFiles = null;
+  document.getElementById('driveModal').classList.remove('active');
+}
+async function driveStep() {
+  const b = document.getElementById('driveBtn');
+  if (driveFiles) return driveShare();
+  if (!navigator.canShare) {
+    closeDriveSave();
+    showToast('この端末は共有保存に未対応です。PCは「📁 フォルダに保存」でドライブ（G:）の写真フォルダを選んでください');
+    return;
+  }
+  b.disabled = true; b.textContent = '準備中…';
+  try {
+    const files = [];
+    const mk = (blob, name, type) => new File([blob], name, { type, lastModified: Date.now() });
+    if (document.getElementById('dvPhotos').checked) {
+      let no = 0;
+      for (const s of stakes) for (const p of s.photos) {
+        no++;
+        const blob = await (await fetch(p.dataUrl)).blob();
+        files.push(mk(blob, photoFileName(no, s), 'image/jpeg'));
+      }
+    }
+    if (document.getElementById('dvJson').checked)
+      files.push(mk(new Blob([JSON.stringify(buildSaveData())]), buildFileName('json'), 'application/json'));
+    if (document.getElementById('dvCsv').checked)
+      files.push(mk(new Blob([buildPhotoCSV() || '﻿']), buildFileName('csv', '撮影位置一覧'), 'text/csv'));
+    if (document.getElementById('dvPdf').checked) {
+      try {
+        const pdf = await buildPDF();
+        files.push(mk(pdf.output('blob'), buildFileName('pdf'), 'application/pdf'));
+      } catch (e) { console.error(e); showToast('PDFを作れなかったため、PDF以外を保存します'); }
+      document.getElementById('driveModal').classList.add('active');
+    }
+    if (!files.length) { b.disabled = false; b.textContent = '準備する'; showToast('保存するものを選んでください'); return; }
+    if (!navigator.canShare({ files })) {
+      // JSON・CSVを受け付けない端末向け：写真・PDFだけで再確認
+      const ok = files.filter(f => /^(image\/|application\/pdf)/.test(f.type));
+      if (ok.length && navigator.canShare({ files: ok })) {
+        showToast('この端末ではJSON・CSVを共有できないため、写真・PDFのみ保存します');
+        files.length = 0; files.push(...ok);
+      } else {
+        closeDriveSave();
+        showToast('この端末は共有保存に未対応です。PCは「📁 フォルダに保存」を使ってください');
+        return;
+      }
+    }
+    driveFiles = files;
+    document.getElementById('driveOpts').style.display = 'none';
+    document.getElementById('driveNames').textContent = `${files.length}件の準備ができました。共有画面で「ファイルに保存」→ ドライブの案件フォルダ ＞ 写真 を選んでください。`;
+    b.disabled = false; b.textContent = '📤 共有画面を開く';
+  } catch (e) {
+    console.error(e);
+    b.disabled = false; b.textContent = '準備する';
+    showToast('準備に失敗しました');
+  }
+}
+async function driveShare() {
+  try {
+    await navigator.share({ files: driveFiles });
+    closeDriveSave();
+    showToast('共有画面での保存を受け付けました（保存先はドライブで確認してください）');
+  } catch (e) {
+    if (e && e.name === 'AbortError') return; // キャンセル：もう一度押せる
+    console.error(e);
+    showToast('共有画面を開けませんでした。もう一度押してください');
   }
 }
 
@@ -1511,10 +1635,27 @@ const PAT = {
 const STAKE_TYPES = ['コンクリート杭', '金属標', 'プラスチック杭', '木杭', '石杭', '鋲', '刻み', 'ペンキ', 'その他'];
 const CONDITIONS = ['新設', '復元', '既設'];
 const BLD_CATS = ['外観', '内部', '屋根', '基礎', '附属建物', '設備', 'その他'];
-const BLD_FLOORS = ['―', '1階', '2階', '3階', '4階', '地階', '屋上'];
-const BLD_PLACES = ['外観（北側）', '外観（東側）', '外観（南側）', '外観（西側）', '外観（北東から）', '外観（南東から）', '外観（南西から）', '外観（北西から）',
-  '玄関', '居間', '台所', '食堂', '和室', '洋室', '寝室', '浴室', '洗面所', '便所', '廊下', '階段', '納戸', '車庫', '倉庫', '事務所', '店舗',
-  '屋根', '基礎', '附属建物', '給湯器', '分電盤'];
+const BLD_FLOORS = ['―', '1階', '2階', '3階', '地階', '屋上'];
+const BLD_PLACES = ['外観', '台所', '便所', '洋室', '和室', 'リビング', 'ダイニング'];
+const FREE = '__free';   // 「手入力」の選択肢
+// 選択肢＋手入力（一覧に無い値は手入力として表示）
+function selectFreeHTML(s, field, list, cur, cls, ph) {
+  const free = !list.includes(cur);
+  return `<select class="${cls.sel}" onchange="pickFree(${s.id},'${field}',this)">${list.map(t => `<option ${cur === t ? 'selected' : ''}>${t}</option>`).join('')}<option value="${FREE}" ${free ? 'selected' : ''}>手入力</option></select>`
+    + `<input class="${cls.inp}" style="${free ? '' : 'display:none'}" value="${free ? escSide(cur || '') : ''}" placeholder="${ph}"
+         onchange="updateStakeField(${s.id},'${field}',this.value.trim());renderStakes()">`;
+}
+function pickFree(id, field, sel) {
+  const inp = sel.nextElementSibling;
+  if (sel.value === FREE) {
+    inp.style.display = '';
+    inp.focus();
+    return;
+  }
+  inp.style.display = 'none';
+  updateStakeField(id, field, sel.value);
+  renderStakes();
+}
 function P() { return PAT[pattern]; }
 function itemName(s) { return pattern === 'building' ? (s.place || s.pointNumber) : s.pointNumber; }
 function itemSub(s) {
@@ -1550,7 +1691,7 @@ function setPattern(p, silent) {
 // ===== STAKE MANAGEMENT =====
 function addStake() {
   const id = ++stakeIdCounter;
-  const place = pattern === 'building' ? (BLD_PLACES.slice(0, 4).find(n => !stakes.some(s => s.place === n)) || '居間') : '';
+  const place = pattern === 'building' ? '外観' : '';
   const ext = !place || place.startsWith('外観');
   stakes.push({
     id,
@@ -1582,6 +1723,8 @@ function updateStakeField(id, field, value) {
   if (field === 'place') {      // 撮影箇所名から区分を推定
     if (/^外観/.test(value)) stake.bcat = '外観';
     else if (BLD_CATS.includes(value)) stake.bcat = value;
+    else if (BLD_PLACES.includes(value) && stake.bcat === '外観') stake.bcat = '内部';
+    if (stake.bcat === '内部' && (!stake.floor || stake.floor === '―')) stake.floor = '1階';
   }
   renderShotTarget();
   scheduleLiveMap();
@@ -1809,8 +1952,7 @@ function itemFormHTML(s) {
   if (pattern === 'building') return `
           <div class="form-group">
             <label class="form-label">撮影箇所</label>
-            <input class="form-input" list="bldPlaces" value="${escSide(s.place || '')}" placeholder="例：外観（南側）、居間"
-                   onchange="updateStakeField(${s.id},'place',this.value);renderStakes()">
+            ${selectFreeHTML(s, 'place', BLD_PLACES, s.place || '', { sel: 'form-select', inp: 'form-input free-input' }, '例：寝室、玄関、外観（南側）')}
           </div>
           <div class="coord-row" style="grid-template-columns:1fr 1fr">
             <div class="form-group">
@@ -1819,7 +1961,7 @@ function itemFormHTML(s) {
             </div>
             <div class="form-group">
               <label class="form-label">階</label>
-              <select class="form-select" onchange="updateStakeField(${s.id},'floor',this.value)">${optionsHTML(BLD_FLOORS, s.floor || '―')}</select>
+              ${selectFreeHTML(s, 'floor', BLD_FLOORS, s.floor || '―', { sel: 'form-select', inp: 'form-input free-input' }, '例：中2階、ロフト')}
             </div>
           </div>`;
   return `
@@ -2138,6 +2280,7 @@ function renderPreview() {
       </div>
     </div>
   `).join('') + mapPage;
+  fitPreviewPages();
 }
 
 // ===== EXPORT / IMPORT =====
@@ -2271,7 +2414,27 @@ function printPages() {
 }
 
 // ===== PDF EXPORT =====
+// 写真帳の用紙が画面からはみ出さないよう縮小表示（スマホで見切れる対策）
+function fitPreviewPages() {
+  const box = document.getElementById('previewContainer');
+  const pages = box.querySelectorAll('.print-page');
+  pages.forEach(pg => pg.style.zoom = '');
+  const avail = box.clientWidth;
+  if (!avail) return;
+  pages.forEach(pg => {
+    const w = pg.offsetWidth;
+    if (w > avail) pg.style.zoom = (avail / w).toFixed(4);
+  });
+}
+window.addEventListener('resize', () => {
+  if (document.getElementById('tab-preview').classList.contains('active')) fitPreviewPages();
+});
 async function exportPDF() {
+  const pdf = await buildPDF();
+  pdf.save(buildFileName('pdf'));
+  showToast('PDF出力完了');
+}
+async function buildPDF() {
   showToast('PDF生成中...');
   switchTab('preview');
   await new Promise(r => setTimeout(r, 500));
@@ -2284,6 +2447,7 @@ async function exportPDF() {
   const pdf = new jsPDF('p', 'mm', format);
   const pages = document.querySelectorAll('.print-page');
 
+  pages.forEach(pg => pg.style.zoom = '');   // PDFは実寸で取り込む
   for (let i = 0; i < pages.length; i++) {
     const canvas = await html2canvas(pages[i], {
       scale: 2,
@@ -2296,8 +2460,8 @@ async function exportPDF() {
     pdf.addImage(imgData, 'JPEG', 0, 0, wMM, hMM);
   }
 
-  pdf.save(buildFileName('pdf'));
-  showToast('PDF出力完了');
+  fitPreviewPages();
+  return pdf;
 }
 
 
@@ -2509,9 +2673,9 @@ function renderCamUI() {
   const f = document.getElementById('camFields');
   if (!s) { f.innerHTML = ''; }
   else if (pattern === 'building') {
-    f.innerHTML = `<input list="bldPlaces" value="${escSide(s.place || '')}" placeholder="撮影箇所" onchange="updateStakeField(${s.id},'place',this.value);renderStakes()">
-      <select onchange="updateStakeField(${s.id},'bcat',this.value)">${optionsHTML(BLD_CATS, s.bcat || '外観')}</select>
-      <select onchange="updateStakeField(${s.id},'floor',this.value)">${optionsHTML(BLD_FLOORS, s.floor || '―')}</select>`;
+    f.innerHTML = `<span class="cam-free">${selectFreeHTML(s, 'place', BLD_PLACES, s.place || '', { sel: '', inp: '' }, '撮影箇所')}</span>
+      <span class="cam-free">${selectFreeHTML(s, 'floor', BLD_FLOORS, s.floor || '―', { sel: '', inp: '' }, '階')}</span>
+      <select onchange="updateStakeField(${s.id},'bcat',this.value)">${optionsHTML(BLD_CATS, s.bcat || '外観')}</select>`;
   } else {
     f.innerHTML = `<input value="${escSide(s.pointNumber)}" placeholder="点名" onchange="updateStakeField(${s.id},'pointNumber',this.value);renderStakes()">
       <select onchange="updateStakeField(${s.id},'stakeType',this.value)">${optionsHTML(STAKE_TYPES, s.stakeType)}</select>
@@ -2575,9 +2739,6 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('field-date').value = today;
   document.getElementById('field-zone').innerHTML = JGD_ZONES.slice(1).map((z, i) =>
     `<option value="${i + 1}" ${i + 1 === 6 ? 'selected' : ''}>第${ROMAN[i + 1]}系（${z[2]}）</option>`).join('');
-  const dl = document.createElement('datalist'); dl.id = 'bldPlaces';
-  dl.innerHTML = BLD_PLACES.map(n => `<option value="${n}">`).join('');
-  document.body.appendChild(dl);
   setPattern('land', true);
   // 現場情報の入力も一時保存
   document.getElementById('tab-edit').addEventListener('change', scheduleAutosave);

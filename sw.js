@@ -1,7 +1,7 @@
 // StakePhotoDrop Service Worker（オフライン用）
 // 写真・座標・入力データは扱いません。アプリ本体（HTML・アイコン・PDF部品）だけを端末に保存します。
 // 起動時はまず端末内の保存分で表示し、電波があれば裏で最新版を取り込みます（次回起動で反映）。
-const VERSION = 'spd-v1.3';
+const VERSION = 'spd-v1.4';
 const SHELL = [
   './',
   './index.html',
